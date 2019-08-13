@@ -1,0 +1,42 @@
+<div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+        <ol class="breadcrumb">
+          <li><a href="{BASESCRIPT}?mod={MOD_NAME}">{lang appname}</a></li>
+          <li><a href="{BASESCRIPT}?mod={MOD_NAME}&op=list&cid=$cid">{eval echo getstr($corpus[name],30);}</a>&nbsp;&nbsp;<a class="share_to_desktop" href="$_G[siteurl]{BASESCRIPT}?mod={MOD_NAME}&op=list&cid=$cid" title="{lang creat_desktop_shortcut}"><i class="glyphicon glyphicon-share"></i></a></li>
+          <!--{if $navlast}-->
+          <!--<li class="active">$navlast</li>-->
+          <!--{/if}-->
+        </ol>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav navbar-right">
+      <!--{if !$_G['uid']}--> 
+        <li class="pull-right"><a href="user.php?mod=login">{lang login}</a></li>
+        <!--{/if}-->
+         <!--{if $corpus[perm]>2}-->
+          <li class="pull-right <!--{if $do=='edit'}-->active<!--{/if}-->"><a href="{BASESCRIPT}?mod={MOD_NAME}&op=list&do=edit&cid=$cid" title="{lang corpus_setting}"><i class="glyphicon glyphicon-cog" style="font-size:16px;"></i></a></li>
+          <!--{/if}--> 
+          <li class="pull-right <!--{if $do=='user'}-->active<!--{/if}-->"><a href="{BASESCRIPT}?mod={MOD_NAME}&op=list&do=user&cid=$cid" title="{lang user_management}"><i class="glyphicon glyphicon-user" style="font-size:16px;"></i></a></li>
+          
+          <!--{if $corpus[perm]>2}--><li class="pull-right <!--{if $do=='recycle'}-->active"<!--{/if}-->"> <a href="{BASESCRIPT}?mod={MOD_NAME}&op=list&do=recycle&cid=$cid" title="{lang recycleBin}"><i class="glyphicon glyphicon-trash" style="font-size:16px;"></i></a>
+          </li>
+          <!--{/if}-->
+          <li class="pull-right <!--{if $do=='event'}-->active<!--{/if}-->"> <a href="{BASESCRIPT}?mod={MOD_NAME}&op=list&do=event&cid=$cid" title="{lang dynamic_condition}"><i class="glyphicon glyphicon-time" style="font-size:16px;"></i></a></li>
+          <!--{if ($corpus['archivetime']>0 || $corpus['deletetime']>0) && $corpus[perm]>1}-->
+         <div class="text-danger pull-right" style="padding:7px 10px">
+                    <b><i class="glyphicon glyphicon-exclamation-sign"></i>&nbsp;{lang this_corpus} <!--{if $corpus['archivetime']>0}-->&nbsp;<em>“{lang archived}”</em>&nbsp;<!--{/if}--> <!--{if $corpus['deletetime']>0}-->&nbsp;<em>“{lang deleted}”</em>&nbsp;<!--{/if}--> {lang state}</b>&nbsp;&nbsp;
+                    <!--{if $corpus[perm]>2}--><a class="btn btn-link" style="padding:2px 5px" href="{BASESCRIPT}?mod={MOD_NAME}&op=list&do=restore&cid=$cid">{lang click_there_to_return}</a><!--{/if}-->
+                </div> 
+          <!--{/if}-->
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->

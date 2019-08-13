@@ -1,0 +1,164 @@
+<style>
+.user-item .delete{
+	display:none;
+}
+.user-item.hover .delete{
+	display:block;
+}
+.more{
+	font-size:80px;line-height:20px;font-family: georgia;
+	color:#BBBBBB;
+}
+.more:hover{
+	color:#428bca;
+}
+.btn-sorg {
+	margin: 5px 10px 5px 0px;
+    padding: 5px 3px;
+}
+.btn-sorg img{
+    width: 17px;
+    height: 17px;
+    border-radius: 100%;
+    margin-right:5px;
+}
+.ibtn{
+    width: 20px !important;
+    height: 20px;
+    line-height: 20px;
+    margin-top: -3px;
+}
+/*.ul_hide{
+    display: block;
+}*/
+</style>
+<script type="text/javascript" src="dzz/system/scripts/selorg.js?{VERHASH}"></script>
+<script type="text/javascript">
+selorg.openarr=$openarr;
+</script>
+<div class="setting-basic-container" style="padding:15px;">
+  <form id="settingform" name="settingform" class="form-horizontal-left form-horizontal" action="{DZZSCRIPT}?mod={MOD_NAME}&op=setting&do=basic" method="post" >
+    <input type="hidden" name="settingsubmit" value="true" />
+    <input type="hidden" name="formhash" value="{FORMHASH}" />
+     <dl>
+    	<dt>{lang the_maximum_number_of_new_groups_per_user}</dt>
+        <dd class="clearfix">
+        	<input type="text" class="form-control input-sm" name="settingnew[maxorganization]" value="$setting[maxorganization]" />
+            <span class="help-inline">{lang leave_blank_or_0_for_unlimited}</span>
+        </dd>
+    </dl>
+    <dl>
+    	<dt>{lang the_maximum_number_of_new_corpus_for_each_user}</dt>
+        <dd class="clearfix">
+        	<input type="text" class="form-control input-sm" name="settingnew[maxcorpus]" value="$setting[maxcorpus]" />
+            <span class="help-inline">{lang leave_blank_or_0_for_unlimited}</span>
+        </dd>
+    </dl>
+    <dl>
+    	<dt>{lang allow_group_users_to_be_set_up}</dt>
+        <dd class="clearfix">
+        	<div class="radio-custom radio-primary">
+                <input type="radio" name="settingnew[neworganization]" value="0"<!--{if !$setting['neworganization']}-->checked<!--{/if}--> onclick="jQuery('#neworganization_users').hide()">
+                <label>{lang total_station_users}</label>
+            </div>
+        </dd>
+         <dd class="clearfix">
+            <div class="radio-custom radio-primary">
+                <input type="radio"  name="settingnew[neworganization]" value="1"<!--{if $setting['neworganization']>0}-->checked<!--{/if}--> onclick="jQuery('#neworganization_users').show()">
+                <label>{lang named_user}</label>
+            </div>
+        </dd>
+        
+        <dd class="clearfix">
+        <dl id="neworganization_users" class="mt20" <!--{if $setting[neworganization]==0}-->style="display:none"<!--{/if}-->>
+          <dt><div class="dropdown">
+            <input id="sel_muids" name="settingnew[moderators]" type="hidden" value="$setting[moderators]" />
+            <a href="javascript:;" class="dropdown-toggle btn btn-width btn-default" id="muids_Menu" data-toggle="dropdown">{lang select_the_user_that_allows_you_to_create_a_new_corpus}<span class="caret"></span></a>
+            <div id="muids_dropdown_menu" class="dropdown-menu org-sel-box" role="menu" aria-labelledby="muids_Menu">
+                <iframe name="muids_iframe" class="org-sel-box-iframe" src="{DZZSCRIPT}?mod=system&op=orgtree&ctrlid=muids&multiple=1" frameborder="0" marginheight="0" marginwidth="0" width="100%" height="100%" allowtransparency="true" ></iframe>
+            </div>
+             </div>
+           </dt>
+          <dd class="clearfix" style="margin-left:0px;">
+            <div id="muids"> 
+                <!--{loop $sel_org $value}-->
+                <button id="muids_sl_$value[orgid]" type="button" class="btn btn-simple btn-sorg" data-val="$value['orgid']" >
+                    <!--{if $value['forgid']}--> 
+                    <!-- <img src="dzz/system/images/department.png" />  -->
+                    {eval echo avatar_group($value['orgid'],null,'iconFirstWord');}
+                                    $value[orgname]
+                    <!--{else}--> 
+                    <!-- <img src="dzz/system/images/organization.png" />  -->
+                    {eval echo avatar_group($value['orgid'],null,'iconFirstWord');}
+                                    $value[orgname]
+                    <!--{/if}--> 
+                    $value[orgpath] <a href="javascript:;" class="ibtn dzz dzz-close" style="width:20px !important;height:20px;line-height:20px;margin-top:-3px;" title="{lang delete}" onclick="selorg.remove('muids',this);"></a>
+                </button>
+                <!--{/loop}--> 
+                <!--{loop $sel_user $value1}-->
+                <button id="muids_sl_uid_$value1[uid]" data-val="uid_$value1['uid']" type="button" class="btn btn-simple btn-sorg">
+                    {eval echo avatar_block($value1[uid],array($value1[uid]=>$value1[headerColor]),'iconFirstWord');} $value1[username] <a href="javascript:;" class="ibtn dzz dzz-close" style="width:20px !important;height:20px;line-height:20px;margin-top:-3px;" title="{lang delete}" onclick="selorg.remove('muids',this);"></a>
+                </button>
+                <!--{/loop}--> 
+            </div>
+          </dd>
+        </dl>
+        </dd>
+    </dl>
+    <dl>
+    	<dt>{lang archive_corpus_to_view_permissions}</dt>
+        <dd class="clearfix">
+            <div class="radio-custom radio-primary">
+            	<input type="radio" name="archiveview" value="0"<!--{if !$setting[archiveview]}-->checked<!--{/if}-->>
+                <label>{lang allows_regular_members_to_view_archive_collections}</label>
+            </div>
+        </dd>
+        <dd class="clearfix">
+            <div class="radio-custom radio-primary">
+                <input type="radio"  name="archiveview" value="1"<!--{if $setting[archiveview]=='1'}-->checked<!--{/if}-->>
+                <label>{lang allows_regular_members_to_view_the_archived_collections_that_have_been_involved}</label>
+            </div>
+        </dd>
+        <dd class="clearfix">
+            <div class="radio-custom radio-primary">
+                <input type="radio"  name="archiveview" value="2"<!--{if $setting[archiveview]=='2'}-->checked<!--{/if}-->>
+                <label>{lang no_allows_regular_members_to_view_archive_collections}</label>
+            </div>
+        </dd>
+    </dl>
+    <dl>
+        <dt>{lang people_who_are_allowed_to_download}</dt>
+        <dd class="clearfix">
+            <!--{loop $allowdown_m $key $value}-->
+            <div class="checkbox-custom checkbox-primary pull-left mb10" style="min-width:120px;">
+                <input type="checkbox" name="settingnew[allowdown_m][]" value="$key" <!--{if (!$setting[allowdown_m]) || (intval($setting[allowdown_m]) & intval($key))}-->checked="checked"<!--{/if}--> />
+                <label>$value</label>
+            </div>
+            <!--{/loop}-->
+           
+        </dd>
+     </dl>
+     <dl>
+            <dt>{lang allow_the_download_format}</dt>  
+            <dd class="clearfix">
+                <!--{loop $allowdown $key $value}-->
+                <div class="checkbox-custom checkbox-primary pull-left mb10" style="min-width:120px;">
+                    <input type="checkbox" name="settingnew[allowdown][]" value="$key" <!--{if (!$setting[allowdown]) || (intval($setting[allowdown]) & intval($key))}-->checked="checked"<!--{/if}--> />
+                    <label>$value</label>
+                </div>
+                <!--{/loop}-->
+            </dd>
+       </dl>
+     <!--<dl>
+    	<dt>书封禁操作理由选项</dt>
+        <dd class="clearfix">
+        	<textarea type="textarea" name="settingnew[modreasons]" rows="4" class="form-control">$setting['modreasons']</textarea>
+            <span class="help-inline">用户封禁操作理由，每行一个</span>
+        </dd>
+    </dl>    -->
+    
+    <input class="btn btn-primary"  name="settingsubmit_btn" value="{lang save_the_changes}" type="submit" >
+  </form>
+</div>
+
+

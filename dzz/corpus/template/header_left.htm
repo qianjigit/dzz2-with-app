@@ -1,0 +1,24 @@
+<ul class="nav navbar-nav navbar-nav-left">
+
+	<!--{if $_GET[op]=='setting' || $_GET['op']=='org'}-->
+    <li>
+        <a href="{MOD_URL}" class="leftTopmenu" style="padding:8px;">
+            <div class="gb_fc"><span class="dzz dzz-chevron-left" style="width: 24px;height: 24px;display: block;font-size: 36px;position: relative;top: -6px;left: -6px;"></span></div>
+        </a>
+    </li>
+    <li>
+        <a href="{MOD_URL}">{lang return}</a>
+    </li>
+    <!--{else}-->
+
+
+    <li>
+        <a href="javascript:;" class="leftTopmenu" onclick="_header.leftTopmenu(this)" style="padding:8px;">
+            <div class="gb_fc"><span class="dzz dzz-menu" style="width:24px;height:24px;display:block;"></span></div>
+        </a>
+    </li>
+    <li >
+        <a href="{MOD_URL}">{lang appname}</a>
+    </li>
+    <!--{/if}-->
+</ul>

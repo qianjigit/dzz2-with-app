@@ -1,0 +1,20 @@
+<!--{if $list}-->
+<!--{loop $list $value}-->
+<a href="javascript:;" class="book">
+	<div class="book-arrange" style="background-color: $value[color];">
+		<div class="activate-book">
+			<span data-cid="$value['cid']">{lang activation}</span>
+		</div>
+		<img src="<!--{if $value['aid']}-->{DZZSCRIPT}?mod=io&op=thumbnail&width=512&height=512&path={eval echo dzzencode('attach::'.$value['aid']);}<!--{else}-->dzz/images/b.gif<!--{/if}-->" />
+	</div>
+	<p class="book-arrange-title">$value[name]</p>
+</a>
+<!--{/loop}-->
+<!--{/if}-->
+<!--{if $next}-->
+    <div class="weui-loadmore" data-url="$theurl&do=list&page={eval echo $page+1}">
+      	<i class="weui-loading"></i>
+      	<span class="weui-loadmore__tips">{lang loading}</span>
+    </div>
+<!--{/if}-->
+		

@@ -1,0 +1,18 @@
+<!--{if $list}-->
+    <!--{loop $list $value}-->
+    <li data-cid="$value[cid]">
+        <a class="js-open-board highlight-icon <!--{if $value[color]}-->color-white<!--{/if}-->" href="{DZZSCRIPT}?mod={MOD_NAME}&op=list&cid=$value[cid]" style="background-color: $value[color]; " target="_blank">
+            <img class="cover" src="<!--{if $value['aid']}-->{DZZSCRIPT}?mod=io&op=thumbnail&width=512&height=512&path={eval echo dzzencode('attach::'.$value['aid']);}<!--{else}-->dzz/images/b.gif<!--{/if}-->" onload="setImage(this,150,200);" />
+            <span class="fade"></span>
+             <!--{if $value[perm]>2}--><span class="icon-cog js-popbox" data-href="{DZZSCRIPT}?mod={MOD_NAME}&op=menu&do=topic&operation=delete&cid=$value[cid]" data-placement="right" data-auto-adapt="auto" title="{lang completely_delete}" data-cid="$value[cid]"><i class="fa fa-cog"></i></span><!--{/if}-->
+           <span class="details" title="$value[name]">$value[name]</span>
+            
+        </a>
+    </li>
+    <!--{/loop}-->
+     <!--{if $next}-->
+     <li class="js-add-board"><a class="board-list-item--add-board js-loadmore" data-href="$theurl&do=list&page={eval echo $page+1}" title="{lang load_more}" href="javascript:;">{lang load_more}</a></li>
+    <!--{/if}-->
+ <!--{else}-->
+	<p class="text-warning">{lang there_is_no_relevant_content}</p>
+<!--{/if}-->

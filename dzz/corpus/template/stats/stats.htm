@@ -1,0 +1,273 @@
+<!--{template common/header_simple_start}-->
+<link href="static/css/common.css?{VERHASH}" rel="stylesheet" media="all">
+<link href="static/js/datepicker/datepicker.css?{VERHASH}" rel="stylesheet" media="all">
+<link href="dzz/corpus/images/popbox.css?{VERHASH}" rel="stylesheet" media="all">
+<link href="dzz/corpus/images/corpus.css?{VERHASH}" rel="stylesheet" media="all">
+<script type="text/javascript" src="static/js/imgReady.js?{VERHASH}"></script>
+<script type="text/javascript" src="static/js/jquery.leftDrager.js?{VERHASH}"></script>
+<script src="static/js/echarts-plain.js?{VERHASH}"></script> 
+<!--{template common/header_simple_end}-->
+
+<style>
+html,body{
+	overflow:hidden;
+	background:#fbfbfb;
+}
+.bs-main-container{
+	overflow:auto;
+	margin-left:0;
+}
+.bs-left-container{
+	width:0;
+}
+.rangedate{
+	font-weight:bold;
+	font-size:16px;
+	padding:10px 0;
+	border-top:1px solid #FFF;
+}
+/*.rangedate input{
+	border:none;
+	box-shadow:none;
+	background:transparent;
+	padding:5px 10px;
+	font-weight:bold;
+	width:260px;
+}*/
+<!--{if $time=='month'}-->
+
+<!--{elseif $time=='week'}-->
+.rangedate input{
+	width:225px;
+}
+<!--{elseif $time=='day'}-->
+.rangedate input{
+	width:120px;
+}
+<!--{/if}-->
+.rangedate input:focus，.rangedate input:active{
+	box-shadow:none;
+}.rangedate input{
+	width:120px;
+}
+</style>
+<div class="bs-container clearfix">
+<div class="bs-main-container">
+<div class="main-content clearfix" style="padding:0;">
+  <div class="corpus-header clearfix" style="padding:0;background:#f7f7f7f7;border-bottom:1px solid #e1e1e1">
+    <ul class="nav nav-pills nav-pills-bottomguide " style="padding:4px 10px 0 10px">
+      <li class="<!--{if $time=='all'}-->active<!--{/if}--> mr15"><a class="btn btn-link" href="{MOD_URL}&op=stats&time=all&type=$type" >{lang overview}</a></li>
+      <li class="<!--{if $time=='month'}-->active<!--{/if}--> mr15"><a class="btn btn-link" href="{MOD_URL}&op=stats&time=month&type=$type" >{lang MonthyChart}</a></li>
+      <li class="<!--{if $time=='week'}-->active<!--{/if}--> mr15"><a class="btn btn-link" href="{MOD_URL}&op=stats&time=week&type=$type" >{lang contour}</a></li>
+      <li class="<!--{if $time=='day'}-->active<!--{/if}--> mr15"><a class="btn btn-link" href="{MOD_URL}&op=stats&time=day&type=$type" >{lang date_line}</a></li>
+      <li class="pull-right">
+        <select id="type" class="form-control" onchange="redirect(this.value);" style="padding:5px">
+          <option  value="user" <!--{if $type=='user'}-->selected="selected"<!--{/if}-->>{lang gain_users}
+          </option>
+          <option value="book" <!--{if $type=='book'}-->selected="selected"<!--{/if}-->>{lang corpus_document}
+          </option>
+        </select>
+      </li>
+    </ul>
+  </div>
+ 
+    <div class="rangedate text-center" > 
+    <!--{if $time!='all'}--> 
+    	<a class="btn btn-link" href="javascript:;" onclick="next_prev('prev','start')"><i class="glyphicon glyphicon-chevron-left"></i></a> 
+          <input type="text" class="form-control" style="display:inline-block" id="datepicker_start" value="$starttime">
+         <a class="btn btn-link" href="javascript:;" onclick="next_prev('next','start')"><i class="glyphicon glyphicon-chevron-right"></i></a>  
+         
+          &nbsp;——&nbsp;
+          <a class="btn btn-link" href="javascript:;" onclick="next_prev('prev','end')"><i class="glyphicon glyphicon-chevron-left"></i></a> 
+          <input style="display:inline-block" class="form-control" type="text" id="datepicker_end" value="$endtime">
+          <a class="btn btn-link" href="javascript:;" onclick="next_prev('next','end')"><i class="glyphicon glyphicon-chevron-right"></i></a>
+       <!--{/if}-->
+    </div>
+    
+  <div id="charts" class="chart-container" style="padding:15px;"> 
+   <!-- <h3 class="text-center">任务完成情况</h3>
+    <div id="charts_todo" style="height:450px;"> <p class="text-center" style="height:100%;background:#F7F7F7">没有相关的统计数据</p></div>
+    <h3 class="text-center" style="padding-top:20px;">工时完成情况</h3>
+    <div id="charts_worktime" style="height:450px;"> </div>
+    <h3 class="text-center" style="padding-top:20px;">预算完成情况</h3>
+    <div id="charts_money" style="height:450px;"> </div>-->
+  </div>
+</div>
+<script type="text/javascript">
+var tbid='{$tbid}';
+var url=DZZSCRIPT+'?mod=corpus&op=stats';
+var time='{$time}';
+
+
+jQuery('.left-drager').leftDrager_layout();  
+var getdateTimer=0;
+function getdatebytime(){
+	var start=jQuery('#datepicker_start').val();
+	var end=jQuery('#datepicker_end').val();
+	//console.log('odate==='+odate+'===='+dateText);
+	if(getdateTimer) window.clearTimeout(getdateTimer);
+	getdateTimer=window.setTimeout(function(){ajaxget(url+'&operation=getdata&type={$type}&time=$time&starttime='+start+'&endtime='+end,'charts','charts');},500);
+}
+function redirect(val){
+	window.location.href=url+'&time={$time}&date=$date&type='+val;
+}
+function next_prev(flag,ider){
+	var dateText='';
+	
+	var end=jQuery('#datepicker_'+ider).val();
+	if(end==''){
+		var t=new Date();
+	}else{
+		var t=new Date(end);
+	}
+	
+	if(time=='month'){
+		var cmonth=t.getMonth();
+		var date=t.getDate();
+		var month_l=t;
+		month_l.setDate(1);
+		if(flag=='next'){
+			month_l.setMonth(cmonth+1);
+		}else{
+			month_l.setMonth(cmonth-1);
+		}
+		jQuery('#datepicker_'+ider).val(month_l.format('yyyy-MM'));
+		getdatebytime();
+	}else if(time=='week'){
+		//console.log(odate);
+		    var week_l=t;
+			var cday=week_l.getDay();
+			var date=week_l.getDate();
+			
+			if(flag=='next'){
+				week_l.setDate(date-cday+1+7);
+			}else{
+				week_l.setDate(date-cday+1-7);
+			}
+			var week_l_stamp=week_l.format('yyyy-MM-dd');
+			//console.log('week_l=='+week_l_stamp);
+			date=week_l.getDate();
+			//console.log(date);
+			week_l.setDate(date+6);
+			var week_u_stamp=week_l.format('yyyy-MM-dd');
+			
+			if(ider=='end'){
+				jQuery('#datepicker_'+ider).val(week_u_stamp);
+			}else{
+				jQuery('#datepicker_'+ider).val(week_l_stamp);
+			}
+			
+			getdatebytime();
+	}else if(time=='day'){
+		var today=t;
+		var date=today.getDate();
+		if(flag=='next'){
+			today.setDate(date+1);
+		}else{
+			today.setDate(date-1);
+		}
+		
+		jQuery('#datepicker_'+ider).val(today.format('yyyy-MM-dd'));
+		
+		getdatebytime();
+	}
+	
+}
+
+jQuery(document).ready(function(e) {
+	getdatebytime();
+	jQuery('#datepicker_start').datepicker({
+			showWeek:true
+			,selectWeek:true
+			,onChangeMonthYear:function(year,month,inst){
+				if(time=='month'){
+					//
+					jQuery('#datepicker_start').val(year+'-'+month);
+					getdatebytime();
+				}
+			},onSelect:function(dateText,inst){
+				if(time=='month'){
+					jQuery('#datepicker_start').val(inst.selectedYear+'-'+(inst.selectedMonth+1));
+				}else if(time=='week'){
+					var t=new Date((inst.selectedYear)+'-'+(inst.selectedMonth+1)+'-'+(inst.selectedDay));
+						var cday=t.getDay();
+						var date=t.getDate();
+						var week_l=t;
+						week_l.setDate(date-cday+1);
+						week_l_stamp=week_l.format('yyyy-MM-dd');
+						var week_u=t;
+						week_u.setDate(date+(7-cday));
+						week_u_stamp=week_u.format('yyyy-MM-dd');
+						jQuery('#datepicker_start').val(week_l_stamp);
+					getdatebytime();
+				}else if(time=='day'){
+					jQuery('#datepicker_start').val(new Date((inst.selectedYear)+'-'+(inst.selectedMonth+1)+'-'+(inst.selectedDay)).format('yyyy-MM-dd'));
+					getdatebytime();
+				}
+				
+			}
+		}
+	);
+	jQuery('#datepicker_end').datepicker({
+			showWeek:true
+			,selectWeek:true
+			,onChangeMonthYear:function(year,month,inst){
+				if(time=='month'){
+					jQuery('#datepicker_end').val(year+'-'+month);
+					getdatebytime();
+				}
+			},onSelect:function(dateText,inst){
+				if(time=='month'){
+					jQuery('#datepicker_end').val(inst.selectedYear+'-'+(inst.selectedMonth+1));
+				}else if(time=='week'){
+					
+					var t=new Date((inst.selectedYear)+'-'+(inst.selectedMonth+1)+'-'+(inst.selectedDay));
+						var cday=t.getDay();
+						var date=t.getDate();
+						var week_l=t;
+						week_l.setDate(date-cday+1);
+						week_l_stamp=week_l.format('yyyy-MM-dd');
+						var week_u=t;
+						week_u.setDate(date+(7-cday));
+						week_u_stamp=week_u.format('yyyy-MM-dd');
+						jQuery('#datepicker_end').val(week_u_stamp);
+						getdatebytime();
+				}else if(time=='day'){
+					jQuery('#datepicker_end').val(new Date((inst.selectedYear)+'-'+(inst.selectedMonth+1)+'-'+(inst.selectedDay)).format('yyyy-MM-dd'));
+					getdatebytime();
+				}
+			}
+		}
+	);
+
+	
+});
+ Date.prototype.format = function(format) {
+       var date = {
+              "M+": this.getMonth() + 1,
+              "d+": this.getDate(),
+              "h+": this.getHours(),
+              "m+": this.getMinutes(),
+              "s+": this.getSeconds(),
+              "q+": Math.floor((this.getMonth() + 3) / 3),
+              "S+": this.getMilliseconds()
+       };
+       if (/(y+)/i.test(format)) {
+              format = format.replace(RegExp.$1, (this.getFullYear() + '').substr(4 - RegExp.$1.length));
+       }
+       for (var k in date) {
+              if (new RegExp("(" + k + ")").test(format)) {
+                     format = format.replace(RegExp.$1, RegExp.$1.length == 1
+                            ? date[k] : ("00" + date[k]).substr(("" + date[k]).length));
+              }
+       }
+       return format;
+}
+</script> 
+
+<script  type="text/javascript" src="static/js/datepicker/jquery.ui.core.js?{VERHASH}"></script> 
+<script  type="text/javascript" src="static/js/datepicker/jquery.ui.datepicker.js?{VERHASH}"></script> 
+<script  type="text/javascript" src="static/js/datepicker/jquery.datepicker-zh-CN.js?{VERHASH}"></script> 
+<script src="static/bootstrap/js/bootstrap.min.js?{VERHASH}"></script> 
+<!--@authorcode  codestrings-->
+<!--{template common/footer_simple}-->  

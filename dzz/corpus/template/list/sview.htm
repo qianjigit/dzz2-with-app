@@ -1,0 +1,83 @@
+<!--{if !$cmk}-->
+<!--{template common/header_simple_start_shou}-->
+<!--{if $corpus['css']}-->
+<link href="{eval echo IO::getFileUri('attach::'.$corpus['css']);}" rel="stylesheet" media="all">
+<!--{/if}-->
+<link href="dzz/corpus/images/corpus.css?{VERHASH}" rel="stylesheet" media="all">
+
+<!--{template common/header_simple_end}-->
+
+<link href="dzz/corpus/images/document.css?{VERHASH}" rel="stylesheet" media="all">
+<!--{if $code==1}-->
+<link rel="stylesheet" href="dzz/corpus/scripts/editor.md/lib/katex/katex.min.css" />
+<link rel="stylesheet" href="dzz/corpus/scripts/editor.md/css/editormd.preview.css" />
+<!--{elseif $code==2}-->
+<link rel="stylesheet" href="dzz/corpus/scripts/editor.md/lib/katex/katex.min.css" />
+<!--{else}-->
+<link href="dzz/system/ueditor/third-party/dzzattach/dzzattach.css?{VERHASH}"  rel="stylesheet"  media="all">
+<!--{/if}-->
+<!--{else}-->
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset={CHARSET}" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<title><!--{if !empty($navtitle)}-->$navtitle<!--{/if}--></title>
+</head>
+<body>
+<!--{/if}-->  
+<!--{if !$cmk}-->  	
+<div class="document-container  clearfix" >
+    <div id="topic_container" class="topic-container" style="padding-top:0">
+         <h1 class="document-subject text-center chapter">$class[fname]</h1>
+        <div id="document_body" class="document-body clearfix">
+        <!--{if $code==1}--><textarea style="display:none">$str</textarea>
+        <!--{else}-->
+        $str
+        <!--{/if}-->
+        </div>
+   </div>
+</div>
+<!--{else}-->
+<h1 class="chapter">$class[fname]</h1>
+$str
+<!--{/if}-->
+<!--{if !$cmk}-->
+<!--{if $code==1}-->
+	<script src="dzz/corpus/scripts/editor.md/lib/marked.min.js"></script>
+    <script src="dzz/corpus/scripts/editor.md/lib/prettify.min.js"></script>
+    <script src="dzz/corpus/scripts/editor.md/lib/raphael.min.js"></script>
+    <script src="dzz/corpus/scripts/editor.md/lib/underscore.min.js"></script>
+    <script src="dzz/corpus/scripts/editor.md/lib/sequence-diagram.min.js"></script>
+ 	<script src="dzz/corpus/scripts/editor.md/lib/flowchart.min.js"></script>
+    <script src="dzz/corpus/scripts/editor.md/lib/jquery.flowchart.min.js"></script>
+	<script src="dzz/corpus/scripts/editor.md/editormd.js"></script>
+    <script src="dzz/corpus/scripts/editor.md/lib/katex/katex.min.js"></script>
+<!--{elseif $code==2}-->
+<!--{else}-->
+<script src="dzz/system/ueditor/ueditor.parse.js?{VERHASH}"></script>
+<script src="dzz/system/ueditor/third-party/dzzattach/dzzattach.js?{VERHASH}" type="text/javascript"></script>
+<!--{/if}-->
+<script type="text/javascript" >
+
+ <!--{if $code==1}-->
+  var testEditormdView2 = editormd.markdownToHTML("document_body", {
+	  				
+                    htmlDecode      : "style,script,iframe",  // you can filter tags decode
+                    emoji           : true,
+                    taskList        : true,
+                    tex             : true,  // 默认不解析
+                    flowChart       : true,  // 默认不解析
+                    sequenceDiagram : true,  // 默认不解析
+                });
+  <!--{elseif $code==2}-->
+  <!--{else}-->
+	jQuery('.document-body .dzz-attach-icon').css({'max-width':'1em','max-height':'1em'});
+	 uParse('.document-body',{'rootPath':'dzz/system/ueditor'});
+     dzzattach.init('.document-body');
+  <!--{/if}-->
+ 
+</script>
+<!--{/if}-->
+</body>
+</html>  

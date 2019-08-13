@@ -1,0 +1,25 @@
+<div class="leconMenu">
+    <!-- <h3 class="bs-left-title">文集</h3> -->
+    <ul class="nav-stacked">
+		<li <!--{if OP_NAME=="index"}-->class="active"<!--{/if}-->>
+            <a href="{BASESCRIPT}?mod={MOD_NAME}"><span class="dzz dzz-book"></span>{lang appname}</a>
+        </li>
+         <!--{if $_G['uid']}-->
+		<li <!--{if  OP_NAME=="archive"}-->class="active"<!--{/if}-->>
+            <a href="{BASESCRIPT}?mod={MOD_NAME}&op=archive"><span class="dzz dzz-archive"></span>{lang archive}</a>
+        </li>
+        
+        <li <!--{if OP_NAME=="delete"}-->class="active"<!--{/if}-->>
+            <a href="{BASESCRIPT}?mod={MOD_NAME}&op=delete"><span class="dzz dzz-delete"></span>{lang recycleBin}</a>
+        </li>
+        <!--{/if}--> 
+        <!--{if $_G['adminid']==1}-->
+        <li <!--{if $do=="basic"}-->class="active"<!--{/if}-->>
+            <a href="{BASESCRIPT}?mod={MOD_NAME}&op=setting&do=basic"><span class="dzz dzz-settings"></span>{lang set_up}</a>
+        </li>
+        <!--{/if}-->    
+    </ul>
+    <div class="clear"></div>
+    
+</div>
+ 

@@ -1,0 +1,246 @@
+<style>
+body{
+	background:#FBFBFB
+}
+.corpus-td-info {
+	max-width:300px;
+}
+.corpus-td-info p{
+	margin-bottom:5px;
+}
+.corpus-td-info span{
+	padding:0 5px;
+	display:inline-block;
+}
+.forbid{
+	color:red;
+}
+.imageContainer{
+	padding-left:20px;
+}
+.imageContainer .imageItem{
+	float:left;
+	width:120px;
+	height:80px;
+	margin:0 10px 10px 0;
+}
+.imageContainer .imageItem .thumbnail{
+	max-width:120px;
+	max-height:80px;
+}
+tbody>tr:first-child>td{
+	border-bottom:1px dashed #DDD;
+}
+/*.ul_hide{
+    display: block;
+}*/
+</style>
+	<div class="main-header clearfix" style="padding:5px;" >
+        <div class="btn-group pull-left">
+          <button type="button" class="btn <!--{if $result<1}-->btn-success<!--{else}--> btn-default<!--{/if}-->" onclick="location.href='{DZZSCRIPT}?mod={MOD_NAME}&op=setting&do=report'">{lang pending}</button>
+          <button type="button" class="btn <!--{if $result}-->btn-success<!--{else}--> btn-default<!--{/if}-->" onclick="location.href='{DZZSCRIPT}?mod={MOD_NAME}&op=setting&do=report&result=1'">{lang processed}</button>
+       	
+         
+        </div>
+         <div class="dropdown pull-left ml10">
+          <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+           <!--{if is_numeric($reason)}-->{eval echo $modreasons[$reason];}<!--{else}--> {lang according_to_the_reason_of_report}<!--{/if}-->
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+          <li><a href="$theurl">{lang all}</a></li>
+          <!--{loop $modreasons $key $value}-->
+            <li><a href="$theurl&reason=$key">$value</a></li>
+          <!--{/loop}-->
+           
+          </ul>
+        </div>
+         <div class="pull-right">
+             <form name="search" action="{BASESCRIPT}" method="get">
+                    <input type="hidden" name="mod" value="corpus" />
+                    <input type="hidden" name="op" value="setting" />
+                    <input type="hidden" name="do" value="report" />
+                    <input type="hidden" name="reason" value="$reason" />
+                    <input type="hidden" name="result" value="$result" />
+                    <div class="input-group" style="width:180px;">
+                         <input name="keyword"  type="text" value="$keyword" class="form-control"  placeholder="{lang title_of_the_corpus_or_report_of_the_user}" onkeyup="if(event.keyCode==27){this.submit()}">
+                         <a href="javascript:;" class="input-group-addon" onclick="this.parentNode.parentNode.submit();return false;"><i class="glyphicon glyphicon-search"></i></a>
+                     </div>
+              </form>
+          </div>  
+        
+    </div>
+    <div class="clearfix" style="border-top:1px solid #FFF">
+      <form id="reportform" name="reportform" class="form-horizontal" action="{BASESCRIPT}?mod={MOD_NAME}&op=setting&do=report" method="post" onsubmit="return validate(this);">
+        <input type="hidden" name="reportsubmit" value="true" />
+        <input type="hidden" name="refer" value="{eval echo urldecode($refer);}" />
+        <input type="hidden" name="formhash" value="{FORMHASH}" />
+        <div class="table-responsive">
+       <table class="table">
+        <thead>
+          <th>&nbsp;</th>
+          <th>{lang menu_filemanagedisp_0}</th>
+          <!--<th><!--{if $order=='orgid'}--><span class="text-danger" title=""><i class="fa fa-group"></i> {lang group}</span><!--{else}--><a href="$theurl&order=orgid" title="{lang sort_by_group}"><i class="fa fa-group"></i> {lang group}</a><!--{/if}--></th>-->
+          <th>{lang jurisdiction}</th>
+          <th><!--{if $order=='documents'}--><span class="text-danger" title="{lang document_number}"><i class="fa fa-file"></i></span><!--{else}--><a href="$theurl&order=documents" title="{lang document_number}"><i class="fa fa-file"></i></a><!--{/if}--></th>
+          <!--<th><!--{if $order=='members'}--><span class="text-danger" title="{lang number_of_member}"><i class="fa fa-user"></i></span><!--{else}--><a href="$theurl&order=members" title="{lang number_of_member}"><i class="fa fa-user"></i></a><!--{/if}--></th>
+          <th><!--{if $order=='viewnum'}--><span class="text-danger" title="{lang viewcount}"><i class="fa fa-eye"></i></span><!--{else}--><a href="$theurl&order=viewnum" title="{lang viewcount}"><i class="fa fa-eye"></i></a><!--{/if}--></th>
+         
+           <th><!--{if $order=='downloads'}--><span class="text-danger" title="{lang download_times}"><i class="fa fa-download"></i></span><!--{else}--><a href="$theurl&order=downloads" title="{lang download_times}"><i class="fa fa-download"></i></a><!--{/if}--></th>-->
+          <th>{lang state}</th> 
+         <th width="140">
+         	<!--{if $order=='rdateline'}--><span class="text-danger">{lang report_time}</span><!--{else}--><a href="$theurl&order=rdateline" title="{lang according_to_this_order}">{lang report_time}</a><!--{/if}-->
+         </th>
+         <th>{lang whistleblower}</th>
+         <th>{lang infringing_items}</th>
+        </thead>
+     <!--{loop $list $value}-->
+     <tbody id="report_{$value[id]}">
+        <tr>
+         <td width="10"><input type="checkbox" name="del[]" value="$value[id]"  /></td>
+         <td >
+         	<div style="max-width:300px;" id="corpus_{$value['cid']}">
+         	<a href="{DZZSCRIPT}?mod={MOD_NAME}&op=list&cid=$value[cid]" <!--{if $value[modreasons]}-->class="forbid" title="{lang has_been_banned}"<!--{/if}--> target="_blank">
+            	<!--{if $value['aid']}-->
+            	<img src="{DZZSCRIPT}?mod=io&op=thumbnail&path={eval echo dzzencode('attach::'.$value[aid]);}" height="50" />&nbsp;
+               <!--{/if}-->
+                $value[name]
+            </a>
+            &nbsp;<small  style="color:#999"><a href="user.php?uid=$value[uid]">$value['username']</a></small>
+            </div>
+          </td>
+          <!--<td>
+          	<a href="{DZZSCRIPT}?mod={MOD_NAME}&op=org&orgid=$value[orgid]" target="_blank">$value[orgname]</a>
+          </td>-->
+          <td>
+          	<!--{if $value[perm]==2}-->{lang open}
+            <!--{elseif $value['perm']==1 && $value[org]}-->{lang subframe}
+            <!--{else}-->{lang privately_owned}<!--{/if}-->
+          </td>
+          <td>{$value['documents']}</td>
+           <!--<td>{$value['members']}</td>
+         <td>{$value['viewnum']}</td>-->
+          <!--<td>{$value['downloads']}</td>-->
+        
+          <td><!--{if $value[deletetime]>0}-->
+         	   <a href="user.php?uid=$value[deleteuid]" target="_blank">$value['deleteusername']</a>&nbsp;{eval echo dgmdate($value[deletetime],'u');}&nbsp;{lang delete}
+              <!--{elseif $value[archivetime]>0}-->
+          	   <a href="user.php?uid=$value[archiveuid]" target="_blank">$value['archiveusername']</a>&nbsp;{eval echo dgmdate($value[archivetime],'u');}&nbsp;{lang archive}
+              <!--{else}-->
+              {lang normal}
+              <!--{/if}-->
+          </td>
+          <td> 
+          	{eval echo dgmdate($value[rdateline],'u');}
+         		
+          </td>
+           <td> 
+          	<a href="user.php?uid=$value[ruid]">$value['rusername']</a>
+         		
+          </td>
+          <td >  
+           
+           <p> 
+           	<!--{if $result}-->
+            	<span class="danger">
+            	<!--{if $value['result']==1}-->
+                {lang has_been_ignored}
+                <!--{elseif $value['result']==2}-->
+                {lang been_banned}
+                <!--{/if}-->
+                &nbsp;{eval echo dgmdate($value[result_time],'u');}
+                </span>
+            <!--{else}-->
+            <button type="button" class="btn btn-link" onclick="setResult(this,'$value[id]','ignore')" >{lang ignore}</button>
+            <button type="button" class="btn btn-link" onclick="setResult(this,'$value[id]','forbid')">{lang banned}</button>
+            <!--{/if}-->
+            </p>
+          </td>
+        </tr>
+       
+        <tr>
+        	<td colspan="10" style="border-top:0;"> 
+            <!--{loop $value['reasons'] $key $val}-->
+          	 <p class="ml20">{eval echo $key+1;}、{eval echo $modreasons[$val];}</p>
+           <!--{/loop}-->
+             <!--{if $value['detail']}-->
+             <p class="ml20"><b>{lang detail}：</b>$value['detail']</p><!--{/if}-->
+             <!--{if $value['aids']}-->
+             <div class="imageContainer clearfix">
+                <!--{loop $value['aids'] $aid}-->
+                <div class="imageItem">
+                    <a href="{DZZSCRIPT}?mod=io&op=thumbnail&original=1&path={eval echo dzzencode('attach::'.$aid);}" target="_blank"><img class="thumbnail" src="{DZZSCRIPT}?mod=io&op=thumbnail&width=512&height=512&path={eval echo dzzencode('attach::'.$aid);}" /></a>
+                </div>
+                <!--{/loop}-->
+            </div>
+            <!--{/if}-->
+            
+       	 </td>
+        </tr>
+        
+     <!--{/loop}-->
+     </tbody>
+     <thead>
+     <tr>
+          <td colspan="20">
+          <label for="chkall" class="checkbox-inline"><input type="checkbox" name="chkall" id="chkall"  onclick="checkAll('prefix', this.form, 'del')">&nbsp;{lang check_all}</label>&nbsp;&nbsp;
+          <input type="hidden" id="type" name="action" value="ignore" />
+         
+         <!--{if $result}-->
+          <button type="button" class="btn btn-danger" onclick="jQuery('#type').val('delete');validate(document.getElementById('reportform'));">{lang delete}</button>
+         <!--{else}-->
+         <button type="button" class="btn btn-default" onclick="jQuery('#type').val('ignore');validate(document.getElementById('reportform'));"> {lang ignore}</button>
+         &nbsp;&nbsp;<button type="button" class="btn btn-danger" onclick="jQuery('#type').val('forbid');validate(document.getElementById('reportform'));"> {lang banned}</button>
+         <!--{/if}-->
+         $multi
+         </td>
+     </tr>
+     </thead>
+    </table>
+    </div>
+          </form>
+    </div>
+    
+    <div class="alert alert-warning" style="margin:0 15px;">
+    	<button type="button" class="close" data-dismiss="alert">&times;</button>
+        <h5><b>{lang hint}</b></h5>
+    	<ul >
+        	<li> {lang archived_corpus_and_deleted_files_are_not_displayed_on_the_user_interface}</li>
+            <li> {lang users_cannot_cancel_but_can_sort}</li>
+            <li> {lang default_to_homepage_in_vain}</li>
+        </ul>
+    
+    </div>
+</div>
+<script type="text/javascript" src="admin/scripts/admin.js"></script>
+<script type="text/javascript">
+
+// jQuery('.a_click').addClass('a_click2');
+
+function setResult(obj,reportid,action){
+	var el=jQuery(obj);
+	 el.button('loading');
+	 var url=DZZSCRIPT+'?mod={MOD_NAME}&op=setting&do=report&operation=result&id='+reportid+'&action='+action;
+	 jQuery.getJSON(url,function(json){
+		 if(json.msg=='success'){
+			 showmessage(__lang.successfully_set,'success',3000,1);
+			 el.closest('tbody').remove();
+		 }else if(json.error){
+			showmessage(json.error,'danger',3000,1);
+		 }
+	 });
+}
+function validate(form){
+	if(jQuery('#type').val()=='ignore'){
+		var msg=__lang.sure_you_want_to_ignore_the_report;
+	}else{
+		var msg=__lang.sure_you_want_to_ban_the_collected_corpus;
+	}
+	if(confirm(msg)){
+		form.submit();
+		return true;
+	}else{
+		return false;
+	}
+}
+</script> 

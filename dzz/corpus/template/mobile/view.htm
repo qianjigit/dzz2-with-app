@@ -1,0 +1,123 @@
+<!--{template common/mobile_simple_start}-->
+<!--{if $corpus['css']}-->
+<link type="text/css" href="$corpus['css']?{VERHASH}" rel="stylesheet">
+<!--{/if}-->
+<!--{if $code==1}-->
+<link rel="stylesheet" href="dzz/corpus/scripts/editor.md/css/editormd.preview.css" />
+<!--{else}-->
+<link href="dzz/system/ueditor/third-party/dzzattach/dzzattach.css?{VERHASH}"  rel="stylesheet"  media="all">
+<link href="dzz/corpus/images/document.css?{VERHASH}" rel="stylesheet" media="all">
+<!--{/if}-->
+<link rel="stylesheet" type="text/css" href="static/css/mabile_common.css?{VERHASH}" />
+<link href="{MOD_PATH}/images/mobile/css/my_view.css?{VERHASH}" rel="stylesheet" media="all" />
+<style type="text/css">
+	html,
+	body {
+		overflow: auto;
+		background: #FFFFFF;
+		height: 100vh;
+	}
+</style>
+<!--{template common/mobile_simple_process}-->
+<div class="view-content header-content">
+	<div class="view-content-title" data-dis="$class[display]">
+		<span>$class[fname]</span>
+		<i class="dzz dzz-more view-operate open-popup" data-target="#showactionSheet"></i></div>
+	<div id="document_body" class="document-body view-content-text" style="height: auto">
+	 <!--{if $code==1}--><textarea style="display:none">$str</textarea>
+            <!--{else}-->
+            $str
+            <!--{/if}-->
+	</div>
+</div>
+<div class="back-top" style="display: none;">
+	<i class="dzz dzz-top"></i>
+</div>
+<input type="hidden" id="nav_prev" value="$pn[prev]" />
+<input type="hidden" id="nav_next" value="$pn[next]" />
+<div id="showactionSheet" class="weui-popup__container popup-bottom">
+	<div class="weui-popup__overlay">
+		<a href="javascript:;" class="close-popup" style="display: block;height: 100%;"></a>
+	</div>
+	<div class="weui-popup__modal">
+		<div class="modal-content" style="padding-top: 0;">
+			<a href="javascript:;" class="weui-grid js_grid more-item" data-set="1">
+				<div class="weui-grid__icon item-icon">
+					<i class="dzz dzz-menu2"></i>
+				</div>
+				<p class="weui-grid__label">{lang catalogue}</p>
+			</a>
+			<!--{if $class[perm]>2}-->
+			<a href="javascript:;" class="weui-grid js_grid more-item" data-set="2">
+				<div class="weui-grid__icon item-icon">
+					<i class="dzz dzz-netdisk-edit"></i>
+				</div>
+				<p class="weui-grid__label">{lang edit}</p>
+			</a>
+			<!--{/if}-->
+			<a href="javascript:;" class="weui-grid js_grid more-item" data-set="3">
+				<div class="weui-grid__icon item-icon">
+					<i class="dzz dzz-share"></i>
+				</div>
+				<p class="weui-grid__label">{lang share}</p>
+			</a>
+			<!--{if $class[perm]>2}-->
+			<a href="javascript:;" class="weui-grid js_grid more-item" data-set="4">
+				<div class="weui-grid__icon item-icon">
+					<i class="dzz dzz-delete"></i>
+				</div>
+				<p class="weui-grid__label">{lang delete}</p>
+			</a>
+			<!--{/if}-->
+		</div>
+		<div class="toolbar createbar" style="position: static;margin-top: 20px;background: #FFFFFF;">
+			<div class="toolbar-inner">
+				<a href="javascript:;" class="btn-a close-popup">{lang cancel}</a>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	var Cid = '{$cid}';
+	var Fid = '{$fid}';
+	var Perm = '{$class[perm]}';
+	jQuery(document).ready(function() {
+		my_view.view();
+	
+	 <!--{if $code==1}-->
+		
+	  var testEditormdView2 = editormd.markdownToHTML("document_body", {
+
+						htmlDecode      : "style,script,iframe",  // you can filter tags decode
+						emoji           : true,
+						taskList        : true,
+						tex             : true,  // 默认不解析
+						flowChart       : true,  // 默认不解析
+						sequenceDiagram : true,  // 默认不解析
+					});
+	  <!--{else}-->
+		jQuery('.document-body .dzz-attach-icon').css({'max-width':'1em','max-height':'1em'});
+		//jQuery('#document_body img').removeAttr('height');
+		 uParse('.document-body',{'rootPath':'dzz/system/ueditor'});
+		 dzzattach.init('.document-body');
+	  <!--{/if}-->
+    });
+</script>
+<!--{if $code==1}-->
+<script src="dzz/corpus/scripts/editor.md/editormd.js"></script>
+ <script src="dzz/corpus/scripts/editor.md/lib/marked.min.js?{VERHASH}"></script>
+    <script src="dzz/corpus/scripts/editor.md/lib/prettify.min.js"></script>
+    <script src="dzz/corpus/scripts/editor.md/lib/raphael.min.js"></script>
+    <script src="dzz/corpus/scripts/editor.md/lib/underscore.min.js"></script>
+    <script src="dzz/corpus/scripts/editor.md/lib/sequence-diagram.min.js"></script>
+ 	<script src="dzz/corpus/scripts/editor.md/lib/flowchart.min.js"></script>
+    <script src="dzz/corpus/scripts/editor.md/lib/jquery.flowchart.min.js"></script>
+   <!--{else}-->
+   <script src="dzz/system/ueditor/ueditor.parse.js?{VERHASH}"></script>
+<script src="dzz/system/ueditor/third-party/dzzattach/dzzattach.js?{VERHASH}" type="text/javascript"></script>
+   <!--{/if}-->
+<script src="{MOD_PATH}/scripts/mobile_my_view.js?{VERHASH}" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" src="static/clipboard/clipboard.min.js"></script>
+</body>
+
+</html>

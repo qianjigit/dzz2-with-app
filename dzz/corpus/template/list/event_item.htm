@@ -1,0 +1,25 @@
+<!--{loop $list $key $value}-->
+{eval $weeks=array('Sunday'=>lang('Sunday'),'Saturday'=>lang('Saturday'),'Friday'=>lang('Friday'),'Thursday'=>lang('Thursday'),'Wednesday'=>lang('Wednesday'),'Tuesday'=>lang('Tuesday'),'Monday'=>lang('Monday'));}
+{eval $date=getdate(strtotime($key));$week=$weeks[$date[weekday]]}
+<div class="progress-day " data-date="$key">
+  <h4> <span class="date">{$date[mon]}/{$date[mday]}</span> <span class="day">$week</span> </h4>
+  <div class="progress-project">
+  <!--{loop $value $value1}-->
+    <div class="activity activity-action" data-uid="$value1[uid]" data-eid="$value1[eid]" style="background-color: rgba(0, 0, 0, 0);"> 
+      	<span class="time">{eval echo dgmdate($value1[dateline],'H:i');}</span> 
+      	<span class="datetime">{eval echo dgmdate($value1[dateline]);}</span>
+      	<div class="action"> 
+        	<a class="member-wrapper"   href="user.php?uid=$value1[uid]"><img class="avatar" src="avatar.php?uid=$value1[uid]&size=small" alt="$value1[username]"></a>
+        	<div class="title"> <a href="user.php?uid=$value1[uid]">$value1[username]</a></div>
+       		 <div class="target"> $value1[body]</div>
+      	</div>
+    </div>
+   <!--{/loop}-->
+    
+    
+  </div>
+</div>
+<!--{/loop}-->
+<!--{if $next}--><a href="javascript:;" id="btn-load-more" onclick="getEventMore('$lastdate','$uid');return false">{lang load_more_content}</a>
+ <!--{else}--><a href="javascript:;" id="btn-load-more" class="over">{lang no_more}</a>
+ <!--{/if}-->

@@ -1,0 +1,104 @@
+<div class="members-wrap" style="padding-top:0;">
+    <div class="window-module  clearfix" style="margin:10px 0;">
+      <input class="pull-left js-search form-control" style="max-width:150px;" type="text" placeholder="{lang search_username}" >
+      <!--{if $perm>2}--><div class="org-members-options">
+      	<a class="button-link js-manage-members js-popbox" data-href="{MOD_URL}&op=menu&do=member_add&cid=$cid" title="{lang add_user}" data-placement="bottom" data-auto-adapt="true"  href="javascript:;">{lang add_user}</a>
+      </div>
+      <!--{/if}-->
+    </div>
+    <div class="window-module u-bottom js-member-list">
+    <!--{loop $list $value}-->
+      <div class="member-list-item-detail clearfix" data-perm="$value[perm]" data-uid="$value[uid]">
+      
+        <div class="member member-no-menu">
+        	{eval echo avatar_block($value[uid]);} $value[username]
+            <!--{if $value[perm]>2}-->
+            <!--<span class="member-gold-badge" title="This member has Trello Gold."></span>-->
+            <span class="member-type admin" title="{lang manager}"></span>
+            <!--{elseif $value[perm]>1}-->
+            <span class="member-type" title="{lang members_of_the_collaboration}"></span>
+            <!--{else}-->
+            <span class="member-type" title="{lang observer}"></span> 
+            <!--{/if}-->
+        </div>
+      	
+        <div class="details">
+          <p class="name-line"><span class="full-name">$value[username]</span></p>
+         <!-- <p class="u-bottom quiet"><span class="quiet u-inline-block">@$value[username]</span></p>-->
+        </div>
+        <div class="options">
+        <!--{if $value['lastactivity']}-->
+        	<!--{if $perm>2}--> 
+            	<!--<a class="option quiet-button js-view-activity" href="javascript:;">Activity</a>-->
+                <a class="option button-link role-button js-change-role js-popbox" data-href="{MOD_URL}&op=menu&do=member_role&cid=$cid&uid=$value[uid]" title="{lang change_permissions}" data-placement="bottom"  href="javascript:;">{eval echo $permtitle[$value[perm]]} <span class="caret"></span></a>
+                <a class="option button-link remove-button js-remove-or-deactivate  js-popbox" data-href="{MOD_URL}&op=menu&do=member_remove&cid=$cid&uid=$value[uid]" title="{lang remove}" data-auto-adapt="true" data-placement="bottom"  href="javascript:;" data-><span class="icon-sm glyphicon glyphicon-remove"></span> <!--{if $value['uid']==$_G['uid']}-->{lang status_away}<!--{else}-->{lang remove}<!--{/if}--></a>
+            <!--{else}-->
+            	<p class="option status quiet">{eval echo $permtitle[$value[perm]]}</p>
+                <!--{if $value['uid']==$_G['uid']}-->
+              	<a class="option button-link remove-button js-remove-or-deactivate  js-popbox" data-href="{MOD_URL}&op=menu&do=member_remove&cid=$cid&uid=$value[uid]" title="{lang remove}" data-auto-adapt="true" data-placement="bottom"  href="javascript:;"><span class="icon-sm glyphicon glyphicon-remove"></span>{lang status_away}</a>
+            	<!--{/if}-->
+           <!--{/if}-->
+       <!--{else}-->
+            <!--{if $perm>2}-->
+            <a class="option quiet-button js-invite-send-repeat"  href="{MOD_URL}{MOD_URL}&op=ajax&do=org_member_invite_sendmail&uid=$value[uid]" data-loading-text="{lang send_in}" title="{lang send_the_invitation_again}">{lang resend}</a>
+            <a class="option button-link remove-button js-remove-or-deactivate  js-popbox" data-href="{MOD_URL}&op=menu&do=member_remove&cid=$cid&uid=$value[uid]" title="{lang remove}" data-auto-adapt="true" data-placement="bottom"  href="javascript:;"><span class="icon-sm glyphicon glyphicon-remove"></span> {lang remove}</a>
+            
+            <!--{else}-->
+            <p class="option status quiet">{lang nonactivated}</p>
+            <!--{/if}-->
+       <!--{/if}-->	
+        </div>
+      </div>
+      <!--{/loop}-->
+      
+    </div>
+</div>
+<script type="text/javascript">
+
+jQuery(document).ready(function(e) {
+	//只有一个管理员时,不允许移除或离开
+	check_admin();
+	
+	jQuery('.js-search').on('keyup',function(){
+		var val=this.value;
+		if(val==''){
+			jQuery('.member-list-item-detail').removeClass('hide');
+		}
+		jQuery('.member-list-item-detail').each(function(index){
+			var uname=jQuery(this).find('.full-name').text();
+			if(uname.match(new RegExp(val))){
+				jQuery(this).removeClass('hide');
+			}else{
+				jQuery(this).addClass('hide');
+			}
+		})
+	});
+	jQuery('.js-invite-send-repeat').on('click',function(){
+		var el=jQuery(this);
+		el.button('loading');
+		jQuery.post(this.href,function(json){
+			if(json.msg=='success'){
+				el.html(__lang.send_successfully);
+			}else{
+				showmessage(json.error,'danger',3000,1);
+				window.setTimeout(function(){el.button('reset');},3000);
+			}
+		},'json');
+		return false;
+	});
+	jQuery('.js-popbox').each(function(){
+		if(jQuery(this).hasClass('disabled')) return;
+		jQuery(this).popbox();
+	});
+});
+function check_admin(){ //只有一个管理员时,不允许移除或离开
+	var adminitem=jQuery('.member-list-item-detail[data-perm="3"]');
+	if(adminitem.length<2){
+		adminitem.find('.js-remove-or-deactivate').off('click.popbox').addClass('disabled');
+		
+	}else{
+		adminitem.find('.js-remove-or-deactivate').removeClass('disabled').popbox();
+	}
+	
+}
+</script> 

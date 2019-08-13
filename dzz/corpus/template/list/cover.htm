@@ -1,0 +1,35 @@
+<div class="document-operation hidden-print"> 
+ <!--{if $corpus['perm']>2}--><a class="pull-right js-popbox tool-cover" href="javascript:;" data-placement="bottom" data-auto-adapt="true" data-href="{DZZSCRIPT}?mod={MOD_NAME}&op=menu&do=topic&operation=cover&cid=$cid"  title="{lang set_the_cover}">{lang set_the_cover}</a><!--{/if}-->
+ </div>
+ <div class="print-spacer print-hidden" style="height:30px;"></div>
+<div class="document-container  clearfix" >
+    <div id="cover_body" class="cover-body background-cover <!--{if $corpus[aid]}-->cover<!--{/if}--> <!--{if $value[color]}-->color-white<!--{/if}--> "  style="background-color: $corpus[color]; ">
+        <h2 class="covername">$corpus[name]</h2>
+        <!--<h4 class="cover--series">$corpus[extra]['--series']</h4>-->
+        <h5 class="cover--authors">$corpus[extra]['--authors']</h5>
+        <div class="cover-footer">
+        	<h4 class="cover--publisher">$corpus[extra]['--publisher']</h4>
+        	<h5 class="cover--isbn">{eval echo $corpus[extra]['--isbn']?'ISBN:'.$corpus[extra]['--isbn']:''}</h5>
+        </div>
+        <img class="cover" src="<!--{if $corpus['aid']}-->{DZZSCRIPT}?mod=io&op=thumbnail&original=1&path={eval echo dzzencode('attach::'.$corpus['aid']);}<!--{else}-->dzz/images/b.gif<!--{/if}-->" />
+    </div>
+     <!--{if $pn[next]}-->
+     <a href="javascript;" data-fid="$pn[next]" class="navigation <!--{if $ismobile}-->narrow<!--{/if}--> navigation-next navigation-unique " title="{lang next_chapter}"  aria-label="{lang next_chapter}"><i class="fa fa-angle-right"></i></a>
+     <!--{/if}-->
+</div>
+
+<script type="text/javascript">
+	jQuery(document).ready(function(e) {
+		<!--{if defined('IN_MOBILE')}-->
+		 var height=document.documentElement.clientHeight-90;
+		<!--{else}-->
+		 var height=jQuery('#cover_body').width()*(4/3);
+		<!--{/if}-->
+        jQuery('#cover_body').css('height',height);
+		setImage(jQuery('#cover_body .cover').get(0),'100%','100%',1);
+    });
+	jQuery('.document-operation .js-popbox').each(function(){
+		jQuery(this).popbox();
+	});
+	
+</script>

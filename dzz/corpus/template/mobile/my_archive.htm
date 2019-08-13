@@ -1,0 +1,92 @@
+<!--{template common/mobile_simple_start}-->
+<link href="{MOD_PATH}/images/mobile/css/my.css?{VERHASH}" rel="stylesheet" media="all" />
+<style type="text/css">
+	.weui-cells.black:after,.weui-cells.black:before{
+		display: none;
+	}
+	.book-arrange{
+		position: relative;
+	}
+	.book-arrange .activate-book{
+	    position: absolute;
+	    top: 0;
+	    height: 100%;
+	    width: 100%;
+	    background: rgba(0,0,0,0.3);
+	    display: -webkit-box;
+	    display: -webkit-flex;
+	    display: flex;
+	    -webkit-box-pack: center;
+	    -webkit-justify-content: center;
+	    justify-content: center;
+	    -webkit-box-align: center;
+	    -webkit-align-items: center;
+	    align-items: center;
+	    font-size: 12px;
+	}
+	.book-arrange .activate-book span{
+	    display: block;
+	    width: 40px;
+	    height: 20px;
+	    border-radius: 2px;
+	    border: 1px solid #FFFFFF;
+	    text-align: center;
+	    color: #FFFFFF;
+	}
+</style>
+<!--{template common/mobile_simple_process}-->
+<div class="header-content">
+	<div class="weui-search-bar" id="searchBar">
+		<form class="weui-search-bar__form" action="" onsubmit="my.my_search(this,'archive');return false;">
+			<div class="weui-search-bar__box">
+				<i class="weui-icon-search"></i>
+				<input type="search" class="weui-search-bar__input" id="searchInput" placeholder="{lang search}" required="">
+				<a href="javascript:;" class="weui-icon-clear" id="searchClear"></a>
+			</div>
+			<label class="weui-search-bar__label" id="searchText">
+		            <i class="weui-icon-search"></i>
+		            <span>{lang search}</span>
+		        </label>
+		</form>
+		<a href="javascript:;" class="weui-search-bar__cancel-btn" id="searchCancel" data-index="archive">{lang cancel}</a>
+	</div>
+	<div class="weui-cells black">
+		<div class="weui-cell book-content">
+			<!--{template mobile/my_archive_item}--> 
+		</div>
+	</div>
+
+</div>
+<div class="footer-simple">
+	<div class="weui-tabbar footer-simple-find">
+		<a href="{MOD_URL}" class="weui-tabbar__item">
+			<div class="weui-tabbar__icon">
+				<i class="dzz dzz-book"></i>
+			</div>
+			<p class="weui-tabbar__label">{lang appname}</p>
+		</a>
+		<a href="{MOD_URL}&op=archive" class="weui-tabbar__item active">
+			<div class="weui-tabbar__icon">
+				<i class="dzz dzz-archive3"></i>
+			</div>
+			<p class="weui-tabbar__label">{lang archive}</p>
+		</a>
+		<a href="{MOD_URL}&op=delete" class="weui-tabbar__item ">
+			<div class="weui-tabbar__icon">
+				<i class="dzz dzz-delete"></i>
+			</div>
+			<p class="weui-tabbar__label">{lang recycleBin}</p>
+		</a>
+	</div>
+</div>
+<script type="text/javascript">
+	var Keyword = '{$keyword}';
+	window.onload = function() {
+		my.my_archive();
+	}
+</script>
+<script src="{MOD_PATH}/scripts/mobile_my.js?{VERHASH}" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" src="static/js/imgReady.js?{VERHASH}"></script>
+</body>
+
+</html>

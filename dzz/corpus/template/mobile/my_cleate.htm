@@ -1,0 +1,115 @@
+<!--{template common/mobile_simple_start}-->
+<link href="{MOD_PATH}/images/mobile/css/my.css?{VERHASH}" rel="stylesheet" media="all" />
+<style type="text/css">
+	.weui-cells {
+		margin-top: 0;
+	}
+	
+	.weui-cells:before {
+		display: none;
+	}
+</style>
+<!--{template common/mobile_simple_process}-->
+<!-- 小组 -->
+<div class="container-fluid">
+	<form class="form " id="newcorpus_form" role="form" method="post" action="{MOD_URL}&op=menu&do=newcorpus" onsubmit="my.my_cleate_formsubmit(this);return false;">
+		<!--{if $operation=='cover'}-->
+		<input type="hidden" name="editcorpussubmit" value="true" />
+		<input type="hidden" name="cid" value="$cid" />
+		<!--{else}-->
+		<input type="hidden" name="newcorpussubmit" value="true" />
+		<input type="hidden" name="orgid" value="$orgid" />
+		<!--{/if}-->
+		<input type="hidden" name="formhash" value="{FORMHASH}" />
+
+		<div class="weui-cells" style="margin-top: 0;">
+			<div class="weui-cell" style="border-bottom: 1px solid #F2F4F6;">
+				<div class="weui-cell__bd" style="font-size: 17px;">
+					<textarea class="weui-textarea" placeholder="{lang corpus_name}" rows="3" name="name">$corpus[name]</textarea>
+				</div>
+			</div>
+			<div style="margin-bottom: 10px;padding: 10px 15px;">
+				<div class="weui-cell__bd" style="color: #7B7B7B;">{lang choose_the_cover_color}</div>
+				<input id="newcorpus_color" type="hidden" name="color" value="$corpus[color]" />
+				<div style="overflow: hidden;">
+					<!--{loop $colorarr $val}-->
+					<span class="background-choose" style="background-color: $val;" data-color="$val">
+						<!--{if $corpus['color']==$val}--><i class="icon-white dzz dzz-done"></i><!--{/if}-->
+					</span>
+					<!--{/loop}-->
+				</div>
+			</div>
+		</div>
+		<div class="weui-cells weui-cells_form">
+			<div class="weui-cell">
+				<div class="weui-cell__bd">
+					<div class="weui-uploader">
+						<div class="weui-uploader__hd">
+							<p>{lang cover_image}</p>
+						</div>
+						<div class="weui-uploader__bd">
+							<ul class="weui-uploader__files" id="uploaderFiles">
+								<!--{if $corpus[aid]}-->
+								<li class="weui-uploader__file">
+									<img class="thumbnail" style="width:100%;height:100%" src="{DZZSCRIPT}?mod=io&op=thumbnail&width=150&height=200&path={eval echo dzzencode('attach::'.$corpus[aid]);}" />
+									<input name="cover" type="hidden" value="$corpus[aid]" />
+									<div class="dzz dzz-close add-img-del"></div>
+								</li>
+								<!--{/if}-->
+							</ul>
+							<div class="weui-uploader__input-box">
+								<input id="uploaderInput" class="weui-uploader__input" type="file" accept="image/png,image/gif,image/jpeg">
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="weui-cells">
+			<div class="weui-cell">
+				<div class="weui-cell__bd">{lang documentation_allows_comments}</div>
+				<div class="weui-cell__ft">
+					<label for="switchCP" class="weui-switch-cp">
+						<!--{if $operation=='cover'}-->
+							<!--{if $corpus[forbidcommit]==1}-->
+							<input id="switchCP" class="weui-switch-cp__input" name="comment" type="checkbox"  value="0"/>
+							<!--{else}-->
+							<input id="switchCP" class="weui-switch-cp__input" name="comment" type="checkbox" checked="checked" value="1"/>
+							<!--{/if}-->
+						<!--{else}-->
+							 <input id="switchCP" class="weui-switch-cp__input" name="comment" type="checkbox"  value="0"/>
+						<!--{/if}-->
+			            <div class="weui-switch-cp__box"></div>
+			        </label>
+				</div>
+			</div>
+		</div>
+
+		<div style="padding: 15px 10px;">
+		<!--{if $operation=='cover'}-->
+		<button id="newcorpussubmit_btn" type="submit" class="weui-btn weui-btn_primary">{lang confirms}</button>
+		<!--{else}-->
+		<button id="newcorpussubmit_btn" type="submit" class="weui-btn weui-btn_primary">{lang create}</button>
+		<!--{/if}-->
+			
+		</div>
+	</form>
+</div>
+<!-- 结束 -->
+	<script type="text/javascript">
+		window.onload = function() {
+			my.my_cleate();
+		}
+	</script>
+	<script src="{MOD_PATH}/scripts/mobile_my.js?{VERHASH}" type="text/javascript" charset="utf-8"></script>
+	<!-- The jQuery UI widget factory, can be omitted if jQuery UI is already included -->
+	<script type="text/javascript" src="static/jquery_file_upload/jquery.ui.widget.js?{VERHASH}"></script>
+	<script type="text/javascript" src="static/jquery_file_upload/jquery.iframe-transport.js?{VERHASH}"></script>
+	<!-- The basic File Upload plugin -->
+	<script type="text/javascript" src="static/jquery_file_upload/jquery.fileupload.js?{VERHASH}"></script>
+	<script type="text/javascript" src="static/jquery_file_upload/jquery.fileupload-process.js?{VERHASH}"></script>
+	<script type="text/javascript" src="static/jquery_file_upload/jquery.fileupload-validate.js?{VERHASH}"></script>
+
+</body>
+
+</html>

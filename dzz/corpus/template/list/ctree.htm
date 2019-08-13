@@ -1,0 +1,796 @@
+<div class="left-header">
+ <div class="classtree-topbar" style="position:relative">
+      	  <!--{if $corpus[perm]>2}--><a class="setting js-popbox" href="javascript:;"  data-placement="bottom" data-auto-adapt="true" data-href="{MOD_URL}&op=menu&do=topic&operation=setting&cid=$cid"  title="{lang set_up}"></a><!--{/if}-->
+         <!--{if $corpus[perm]>1 && $corpus['archivetime']<1}-->
+        <!--<a class="newdir create-newdir js-popbox" href="javascript:;" data-placement="bottom" data-auto-adapt="true" data-href="{MOD_URL}&op=menu&do=topic&operation=newdoc&cid=$cid&num=1" title="{lang new_document}"></a>
+        <a class="newdir_1 create-newdir js-popbox" href="javascript:;" data-placement="bottom" data-auto-adapt="true" data-href="{MOD_URL}&op=menu&do=topic&operation=newdoc&cid=$cid&num=0" title="{lang new_junior_classification}"></a>-->
+        <a class="newdir create-newdir" data-status="1" href="javascript:;" title="{lang new_document}"></a>
+        <a class="newdir_1 create-newdir" data-status="0" href="javascript:;"  title="{lang new_junior_classification}"></a>
+        
+        <!--<a class="newdoc js-popbox" href="javascript:;" data-placement="bottom" data-auto-adapt="true" data-href="{MOD_URL}&op=menu&do=topic&operation=newdoc&cid=$cid"  title="{lang new_document}"></a>-->
+        
+        
+        
+        <a class="import js-popbox" href="javascript:;" data-placement="bottom" data-auto-adapt="true" data-href="{MOD_URL}&op=menu&do=topic&operation=import&cid=$cid"  title="{lang the_import_documents}"></a>
+         <!--{/if}-->
+         <!--{if $downperm}-->
+         <a class="download js-popbox" href="javascript:;" data-placement="bottom" data-auto-adapt="true" data-href="{MOD_URL}&op=menu&do=topic&operation=download&cid=$cid"  title="{lang download_this_corpus}"></a><!--{/if}-->
+         <a class="share js-popbox" href="javascript:;" data-placement="bottom" data-auto-adapt="true" data-href="{MOD_URL}&op=menu&do=topic&operation=share&cid=$cid"  title="{lang share_this_corpus}"></a>
+         
+         
+        <!-- <a class="drager-op pull-right" href="javascript:;"><i class="fa fa-bars"></i></a>-->
+         <a  class="search" href="javascript:;" onclick="jQuery('.classtree-search').slideDown(200);jQuery('.left-drager-op').hide();jQuery('#jstree_search_input').focus();" title="{lang search}" ></a>
+    </div>
+    <div  class="classtree-search">
+        <!--<a href="javascript:;" class="search" onclick="jstree_search();return false" title="搜索"><i class="glyphicon glyphicon-search"></i></a>-->
+        <a href="javascript:;" class="delete" onclick="jstree_search('stop');return false" title="{lang close_search_box}"><i class="glyphicon glyphicon-remove"></i></a>
+        <input id="jstree_search_input" type="text" class="form-control" onkeyup="if(event.keyCode==13){jstree_search()}"  onblur="jstree_search()" />
+    </div>
+</div>
+<div class="left-wrapper <!--{if $corpus[theme]}-->classtree-simple jstree-no-icons<!--{/if}--> jstree-dots">
+    <div class="classtree-cname selected">
+        <!--{if $corpus[archivetime]}-->
+        <a href="javascript:;" class="warning fa fa-exclamation-triangle" title="{lang archived}"></a>
+        <!--{elseif $corpus[deletetime]}--> 
+        <a href="javascript:;" class="danger fa fa-exclamation-triangle" title="{lang deleted}"></a>
+        <!--{else}-->
+        <a href="javascript:;" class="icon-book-open"></a>
+        <!--{/if}--> 
+        <span <!--{if $corpus['modreasons']}-->class="forbid" title="{lang has_banned}：{$modtitle}"<!--{/if}-->>$corpus[name]</span>
+    </div>
+    <div id="classtree" class="classtree-container"></div>
+</div>
+<script type="text/javascript">
+var version='$version';
+var cid='{$cid}';
+var fid=parseInt('{$fid}');
+var currentfid=0;
+var perm='{$corpus[perm]}';
+var archive='{$corpus[archivetime]}';
+jQuery('.classtree-cname').on('click',function(){
+	jQuery('#classtree').jstree(true).deselect_all();
+	jQuery(this).addClass('selected');
+	getTopicListByFid('cover');
+	location.hash='#';
+	currentfid=0;
+});
+jQuery(document).on('click','.create-newdir',function(){
+	var status = jQuery(this).data('status');
+	var inst=jQuery("#classtree").jstree(true);
+	var pfid = 0;
+	if(!jQuery('.classtree-cname').hasClass('selected') && inst.get_selected(true).length){
+		var obj = inst.get_selected(true);
+		obj=obj[0];
+		pfid = obj.id;
+	}
+	showWindow('create_newdir','{MOD_URL}&op=list&do=ctree&operation=create_newdir&cid=$cid&pfid='+pfid+'&flag='+status,'get',0);
+	return false;
+})
+jQuery('.classtree-cname .icon-book-open').on('click', function() {
+	var self=jQuery(this).parent();
+	if(self.hasClass('open')){
+		self.removeClass('open');
+	}else{
+		self.addClass('open');
+	}
+	jQuery('#classtree').stop().slideToggle();
+	return false;
+});
+jQuery(window).on('hashchange',function(e){
+	 var inst=jQuery("#classtree").jstree(true);
+	 var hash=window.location.hash;
+	 if(hash){
+		var fid=(hash.replace(/^#(fid|m)_/i,''));
+	 }
+	 if(fid==currentfid) return;
+	 if(fid){
+		   jQuery.getJSON(DZZSCRIPT+'?mod=corpus&op=list&do=ctree&operation=getParentFid&fid='+fid+'&cid=$cid',function(json){
+				for(var i in json){
+					if(document.getElementById(json[i][0])) open_node_dg(inst,document.getElementById(json[i][0]),json[i]);
+				}
+		   });
+	 }else{
+		  jQuery('.classtree-cname').trigger('click');
+	 }
+	
+});
+jQuery(document).ready(function(e) {
+	if(perm<2 || archive>0){
+		jQuery("#classtree").jstree({ 
+			"core" : {
+				"multiple" : false,
+				"check_callback" : true,
+				"themes" : { "responsive":false},
+				"data":{
+					dataType:'json',
+					url : '{MOD_URL}&op=list&do=ctree&operation=getchildren&t='+new Date().getTime(),
+					data : function (node) {
+					  return { 'id' : node.id,'cid':'$cid'};
+					}
+				  }
+			  },
+			   "search":{ 
+					 "show_only_matches":true
+					 ,"fuzzy":false
+					 ,'search_leaves_only':true
+					 ,"ajax":{'url' : '{MOD_URL}&op=list&do=ctree&operation=search&cid=$cid','dataType':'json'}
+				   
+			   },
+			  "types" : {
+					"#" : {
+					  "max_children" : -1, 
+					  "max_depth" : -1, 
+					  "valid_children" : -1
+					},
+					"folder" : {
+					  "icon" : "jstree-icon-book",
+					  "valid_children" : ['folder','file']
+					},
+					"default" : {
+					  "valid_children" : []
+					},
+					"file" : {
+					  "icon" : "glyphicon jstree-icon-file",
+					  "valid_children" : []
+					},
+					"manage":{
+						 "icon" : "glyphicon jstree-icon-manage",
+					  	 "valid_children" : ['event','recycle','user','setting','metadata']
+					},
+					"event" : {
+					  "icon" : "glyphicon glyphicon-event",
+					  "valid_children" : []
+					},
+					"user" : {
+					  "icon" : "glyphicon glyphicon-user1",
+					  "valid_children" : []
+					},
+					"recycle" : {
+					  "icon" : "glyphicon glyphicon-recycle",
+					  "valid_children" : []
+					}
+			  },
+		   "plugins" : ["types","search","wholerow"]		 
+		});
+	}else{
+		jQuery("#classtree").jstree({ 
+		"core" : {
+			"multiple" : false,
+			"check_callback" : function (operation, node, node_parent, node_position, more) {
+				// operation can be 'create_node', 'rename_node', 'delete_node', 'move_node' or 'copy_node'
+				// in case of 'rename_node' node_position is filled with the new node name
+				return node.id=='manage' || node_parent.id=='manage' ? false : true;
+			},
+			"themes" : {"responsive" : false/*,"dots":false,"icons":true,"variant":'large'*/},
+			"data":{
+					dataType:'json',
+					url : '{MOD_URL}&op=list&do=ctree&operation=getchildren&t='+new Date().getTime(),
+					data : function (node) {
+					  return { 'id' : node.id,'cid':'$cid'};
+					}
+				  }
+		  },
+		  "dnd":{
+			 "touch":"selected",
+			 "copy":false,
+			 "is_draggable":function(node){
+				 for(var i=0 ; i<node.length;i++){
+				 	if(node[i].id=='manage' ||　node[i].parent=='manage') return false;
+				 }
+				 return true;
+			 }
+		  },
+		  
+		  "types" : {
+				"#" : {
+				  "max_children" : -1, 
+				  "max_depth" : -1, 
+				  "valid_children" : -1
+				},
+				"folder" : {
+				  "icon" : "jstree-icon-book",
+				  "valid_children" : ['folder','file']
+				},
+				"default" : {
+				  "valid_children" : []
+				},
+				"file" : {
+				  "icon" : "jstree-icon-book",
+				  "valid_children" : ['folder','file']
+				},
+				"manage":{
+					 "icon" : "glyphicon jstree-icon-manage",
+				  	 "valid_children" : ['event','recycle','user','setting','metadata']
+				},
+				"event" : {
+				  "icon" : "glyphicon glyphicon-event",
+				  "valid_children" : []
+				},
+				"user" : {
+				  "icon" : "glyphicon glyphicon-user1",
+				  "valid_children" : []
+				},
+				"recycle" : {
+				  "icon" : "glyphicon glyphicon-recycle",
+				  "valid_children" : []
+				}
+				
+		  },
+		  
+		  'contextmenu':{
+			  'select_node' : false,
+			  'show_at_node' : true,
+			  'items':{
+				  "create_sibing" : {
+						"separator_before"	: false,
+						"separator_after"	: true,
+						"_disabled"			:function(data){
+							var inst = jQuery.jstree.reference(data.reference);
+							var node=inst.get_node(data.reference);
+							if(node.id=='manage' || node.parent=='manage') return true;
+							return false;
+						},
+						"label"				: __lang.new_class_classification,
+						"icon"				: "glyphicon glyphicon-tag",
+						"action"			: function (data) {
+							var inst = jQuery.jstree.reference(data.reference);
+							var obj = inst.get_node(data.reference);
+							showWindow('create_newdir','{MOD_URL}&op=list&do=ctree&operation=create_newdir&cid=$cid&pfid='+obj.id+'&flag=1','get',0);
+						}
+					},
+				  "create" : {
+						"separator_before"	: false,
+						"separator_after"	: true,
+						"_disabled"			: function(data){
+							var inst = jQuery.jstree.reference(data.reference);
+							var node=inst.get_node(data.reference);
+							if(node.id=='manage' || node.parent=='manage') return true;
+							return false;
+						}, 
+						"label"				: __lang.new_junior_classification,
+						"icon"				: "glyphicon glyphicon-tags",
+						"action"			: function (data) {
+							var inst = jQuery.jstree.reference(data.reference);
+							var obj = inst.get_node(data.reference);
+							showWindow('create_newdir','{MOD_URL}&op=list&do=ctree&operation=create_newdir&cid=$cid&pfid='+obj.id+'&flag=0','get',0);
+						}
+					},
+					"rename" : {
+						"separator_before"	: false,
+						"separator_after"	: false,
+						"_disabled"			: function(data){
+							var inst = jQuery.jstree.reference(data.reference);
+							var node=inst.get_node(data.reference);
+							if(node.id=='manage' || node.parent=='manage') return true;
+							return false;
+						},
+						"label"				: __lang.rechristen,
+						/*
+						"shortcut"			: 113,
+						"shortcut_label"	: 'F2',*/
+						"icon"				: "glyphicon glyphicon-leaf",
+						
+						"action"			: function (data) {
+							
+							var inst = jQuery.jstree.reference(data.reference),
+								obj = inst.get_node(data.reference);
+								inst.edit(obj);
+									
+						}
+					},
+					"remove" : {
+						"separator_before"	: false,
+						"icon"				: false,
+						"separator_after"	: false,
+						"_disabled"			: function(data){
+							var inst = jQuery.jstree.reference(data.reference);
+							var node=inst.get_node(data.reference);
+							var parent=inst.get_node(node.parent);
+							if(node.id=='manage' || node.parent=='manage' ) return true;
+							return false;
+						},
+						"label"				: __lang.delete1,
+						"icon"				: "glyphicon glyphicon-remove",
+						"action"			: function (data) {
+							var inst = jQuery.jstree.reference(data.reference),
+								obj = inst.get_node(data.reference),
+								parent=inst.get_node(obj.parent);
+								
+									if(inst.is_selected(obj)) {
+										needsave=0;
+										inst.delete_node(inst.get_selected());
+									}
+									else {
+										inst.delete_node(obj);
+									}
+								
+						}
+					}
+			  }
+		  },
+		  
+		   //"search":{  "show_only_matches":true,"fuzzy":false},
+		   "search":{ 
+		   		 "show_only_matches":true
+				 ,"fuzzy":false
+				 ,'search_leaves_only':true
+				 ,"ajax":{'url' : '{MOD_URL}&op=list&do=ctree&operation=search&cid=$cid','dataType':'json'}
+			   
+		   },
+		   "plugins" : ["contextmenu", "dnd", "types","search","wholerow"]
+		});
+	}
+	
+	jQuery("#classtree").on('select_node.jstree',function(e,data){
+
+		jQuery('.classtree-cname').removeClass('selected');
+		jQuery("#classtree").jstree(true).toggle_node(data.node);
+		if(data.node.id=='manage'){
+		}else if(data.node.parent=='manage'){
+			getTopicListByFid(data.node.id);
+			location.hash='#m_'+data.node.id;
+			currentfid=data.node.id;
+		}else{
+			if(jQuery('#'+data.node.id).hasClass('isnew')){
+				editTopic(data.node.id);
+			}else{
+				if(currentfid!=data.node.id){
+					currentfid=data.node.id;
+					getTopicListByFid(data.node.id);
+					location.hash='#fid_'+data.node.id;
+				}else if(searchkey){
+					jQuery('#topic_container').removeHighlight(searchkey);
+					jQuery('#topic_container').highlight(searchkey);
+					var top=0;
+					var first=jQuery('#topic_container').find('.highlight').first();
+					if(first.length){
+						window.setTimeout(function(){
+							var offset=first.offset();
+							top=offset.top-40;
+							jQuery('.bs-main-container').scrollTop(top);
+						},100);
+					}
+				}
+			}
+		}
+	 });
+	 jQuery("#classtree").on('ready.jstree',function(e){
+			 var inst=jQuery("#classtree").jstree(true);
+			 var hash=location.hash;
+			 if(hash){
+				 fid=(hash.replace(/^#(fid|m)_/i,''));
+			 }else{
+				 fid='$_GET[fid]';
+			 }
+			 if(fid){
+				jQuery.getJSON(DZZSCRIPT+'?mod=corpus&op=list&do=ctree&operation=getParentFid&fid='+fid+'&cid=$cid',function(json){
+					for(var i in json){
+						 if(document.getElementById(json[i][0])) open_node_dg(inst,document.getElementById(json[i][0]),json[i]);
+					}
+				});
+			 }else{
+				 jQuery('.classtree-cname').trigger('click');
+				/* var node=inst.get_node(jQuery('#classtree .jstree-node:first').attr('id'));
+				 inst.select_node(node);*/
+			 }
+	 });
+	 jQuery("#classtree").on('move_node.jstree',function(e,data){
+		jQuery.get(DZZSCRIPT+'?mod=corpus&op=list&do=ctree&operation=move&cid={$cid}',{'fid':data.node.id,'pfid':data.parent,'position':data.position,'t':new Date().getTime()});
+	 });
+	 
+	jQuery("#classtree").on('rename_node.jstree',function(e,data){
+		jQuery.getJSON(DZZSCRIPT+'?mod=corpus&op=list&do=ctree&operation=rename&cid={$cid}',{'fid':data.node.id,text:data.text,'t':new Date().getTime()},function(json){
+			var inst = jQuery("#classtree").jstree(true);
+			var obj = inst.get_node(data.node);
+			if(!json || json.error){
+					obj.text=data.old;
+					inst.set_text(obj,data.old);
+				if(json.error) alert(json.error);	
+			}else{
+				if(inst.is_selected(data.node) && data.node.type=='file'){
+					jQuery('.document-subject').text(data.text);
+				}
+			}
+		});
+	 });
+	 jQuery("#classtree").on('search.jstree',function(e,data){
+		if(data.res.length>0){
+			if(jQuery("#classtree").jstree(true).get_selected(true).length>0){
+				jQuery("#classtree").jstree(true).deselect_node(jQuery("#classtree").jstree(true).get_selected(true));
+			}
+			 jQuery('#classtree .jstree-anchor.jstree-search').first().trigger('click');
+		}else{
+			showmessage(__lang.no_relevant_results_were_found,'warning',3000,1);
+		}
+	 });
+	 jQuery("#classtree").on('delete_node.jstree',function(e,data){
+		var inst = jQuery("#classtree").jstree(true);
+		jQuery.get(DZZSCRIPT+'?mod=corpus&op=list&do=ctree&operation=delete&cid={$cid}',{'fid':data.node.id,'t':new Date().getTime()},function(){
+			if (inst.is_selected(data.node)){
+				jQuery('#topic_container').empty();
+				if(inst.get_node(inst.get_next_dom(data.node))){
+					inst.select_node(inst.get_node(inst.get_next_dom(data.node)));
+				}else if(inst.get_parent(data.node)=='#'){
+					inst.select_node(inst.get_node(jQuery('#classtree .jstree-node:first').attr('id')));
+				}else{
+					inst.select_node(inst.get_node(inst.get_parent(data.node)));
+				}
+			}else if(inst.is_selected('recycle')){
+				getTopicListByFid('recycle');
+			}
+		});
+		
+	 });
+});
+function open_node_dg(inst,node,arr){ //自动打开有权限的分类树
+	 inst.open_node(node,function(node){
+		 var i=jQuery.inArray(node.id,arr);
+		 if(i<arr.length && i>-1 && document.getElementById(arr[i+1])) open_node_dg(inst,document.getElementById(arr[i+1]),arr);
+		 else{
+			 inst.deselect_all();
+			 inst.select_node(node);
+			 inst.open_node(node);
+			 var pos=jQuery('#'+node.id).position();
+			 jQuery('.left-wrapper').scrollTop(pos.top);
+		 }
+	 });
+ }
+var searchkey='';
+var oldnodeid=null;
+function jstree_search(op){
+	if(op=='stop' || jQuery('#jstree_search_input').val()==''){
+		jQuery('.classtree-search').slideUp(300);
+		jQuery('.left-drager-op').show();
+		jQuery('#jstree_search_input').val('');
+		searchkey='';
+		jQuery("#classtree").jstree(true).search(false);
+		jQuery("#classtree").jstree(true).deselect_all(true);
+		if(jQuery('#'+oldnodeid).length) jQuery("#classtree").jstree(true).select_node(oldnodeid);
+		//jQuery("#"+oldnodeid+' .jstree-anchor').trigger('click');
+		jQuery('#topic_container').removeHighlight();
+		oldnodeid=null;
+	}else{
+		if(searchkey==''){
+			if(jQuery("#classtree").jstree(true).get_selected(true).length>0){
+				obj=jQuery("#classtree").jstree(true).get_selected(true);
+				obj=obj[0];
+				oldnodeid=obj.id;
+			}
+			
+		}
+		if(searchkey!=jQuery('#jstree_search_input').val()){
+			searchkey=jQuery('#jstree_search_input').val();
+			jQuery("#classtree").jstree(true).search(jQuery('#jstree_search_input').val());
+			jQuery('#topic_container').highlight(searchkey);
+		}	 
+	}
+}
+jQuery(document).on('change','.input-fname',function(){
+	if(jQuery.trim(jQuery(this).val()) == ''){
+		jQuery(this).siblings('.input-error').text('{lang the_title_should_not_be_blank}').show();
+	}else{
+		jQuery(this).siblings('.input-error').hide();
+	}
+	
+});
+function jstree_create_dir(form){
+	var fname = jQuery(form).find('.input-fname').val();
+	if(jQuery.trim(fname) == ''){
+		jQuery(form).find('.input-error').text('{lang the_title_should_not_be_blank}').show();
+		return false;
+	}
+	var pfid = jQuery(form).find('#pfid').val();
+	var flag = jQuery(form).find('#flag').val();
+	var num = jQuery('.inputRadios:checked').val();
+	var obj;
+	var inst=jQuery("#classtree").jstree(true);
+	var pos=-1;
+
+	if(flag>0 && !jQuery('.classtree-cname').hasClass('selected')){//同级
+		var parent = inst.get_node(pfid);
+		var pfid1 = parent.parent;
+		parent = inst.get_node(pfid1);
+		if(jQuery.inArray(pfid,parent.children)>-1){
+			pos=jQuery.inArray(pfid,parent.children)+1;
+		}
+		jQuery.getJSON(DZZSCRIPT+'?mod=corpus&op=list&do=ctree&operation=create&cid={$cid}',{'pfid':pfid1,'disp':pos,'code':num,'fname':fname,'type':'folder','t':new Date().getTime()},function(json){
+			if(!json || json.error){
+				showmessage(json.error,'danger',3000,1);
+			}else if(json.id>0){
+				if(pos<0){
+					pos='last';
+				}
+				inst.create_node(parent, json, pos);
+			}
+			hideWindow('create_newdir');
+		});
+	}else{//下级
+
+		if(jQuery('.classtree-cname').hasClass('selected')){
+			obj = inst.get_node('#');
+			pfid='#';
+			parent='#';
+			pos='first';
+		}else{
+			obj = inst.get_node(pfid);
+			pos='last';
+		}
+		jQuery.getJSON(DZZSCRIPT+'?mod=corpus&op=list&do=ctree&operation=create&cid={$cid}',{'pfid':pfid,'disp':-1,'code':num,'fname':fname,'type':'folder','t':new Date().getTime()},function(json){
+			if(!json || json.error){
+				alert(json.error);
+			}else if(json.id>0){
+				inst.create_node(obj, json, pos, function (new_node) {	
+					setTimeout(function () { inst.open_node(new_node.parent);},0);
+				});
+			}
+			hideWindow('create_newdir');
+		});
+
+	}
+}
+function jstree_import_from_evernote(guid,id){
+	var inst=jQuery("#classtree").jstree(true);
+	var pfid='#';
+	var pos=-1;
+	if(inst.get_selected(true).length>0){
+		obj=inst.get_selected(true);
+		obj=obj[0];
+		if(obj.type=='folder' || obj.type=='file'){
+			pfid=obj.id;
+			pos=-1
+		}else{
+			pfid=obj.parent;
+			var parent=inst.get_node(pfid);
+			if(obj.id=='manage'){
+				pos=parent.children.length;
+			}else if(jQuery.inArray(obj.id,parent.children)>-1){
+				pos=jQuery.inArray(obj.id,parent.children)+1;
+			}else if(pfid=='#' && jQuery('#manage').length>0){
+				pos=parent.children.length-1;
+			}
+		}
+	}else if(jQuery('.classtree-cname').hasClass('selected')){
+		pos=inst.get_node('#').children.length-1;
+	}
+	
+	obj=inst.get_node(pfid);
+	
+	jQuery.post(DZZSCRIPT+'?mod=corpus&op=evernote&do=import&cid={$cid}&pfid='+(pfid=='#'?0:pfid)+'&type=file&id='+id+'&disp='+pos+'&guid='+guid,function(json){
+			if(!json || json.error){
+				showmessage(json.error,'danger',5000,1);
+				jQuery('#'+guid+' .js-importing').hide();
+			}else if(json.id>0){
+				if(pos<0){
+					pos='last';
+				}
+				inst.create_node(obj, json, pos, function (new_node) {
+					setTimeout(function () {
+						inst.deselect_all(true);
+						inst.select_node(inst.get_node(new_node.id));
+					});
+				});
+				window.evernote_imported.push(json.guid);
+				jQuery('#'+guid).remove();
+				showmessage(__lang.import_success,'success',3000,1);
+			}
+		},
+		'json');
+	
+}
+function jstree_import_from_rss(rss){
+	var inst=jQuery("#classtree").jstree(true);
+	var pfid='#';
+	var pos=-1;
+	if(inst.get_selected(true).length>0){
+		obj=inst.get_selected(true);
+		obj=obj[0];
+		if(obj.type=='folder' || obj.type=='file'){
+			pfid=obj.id;
+			pos=-1
+		}else{
+			pfid=obj.parent;
+			var parent=inst.get_node(pfid);
+			if(obj.id=='manage'){
+				pos=parent.children.length;
+			}else if(jQuery.inArray(obj.id,parent.children)>-1){
+				pos=jQuery.inArray(obj.id,parent.children)+1;
+			}else if(pfid=='#' && jQuery('#manage').length>0){
+				pos=parent.children.length-1;
+			}
+		}
+	}else if(jQuery('.classtree-cname').hasClass('selected')){
+		pos=inst.get_node('#').children.length-1;
+	}
+	
+	obj=inst.get_node(pfid);
+	showmessage('{lang importing_please_wait_a_moment}...','warning');
+	jQuery.post(DZZSCRIPT+'?mod=corpus&op=rss_import&cid={$cid}&pfid='+(pfid=='#'?0:pfid)+'&type=file&disp='+pos+'&rss='+encodeURI(rss),function(json){
+			if(!json || json.error){
+				showmessage(json.error,'danger',0,1);
+				jQuery('#rss_import_btn').button('reset');
+			}else if(json.msg=='success'){
+				inst.refresh();
+				showmessage(__lang.import_success,'success',3000,1);
+				jQuery('#rss_import .close').trigger('click');
+			}
+		},'json');
+	
+}
+function jstree_import_doc(icodata){
+	var inst=jQuery("#classtree").jstree(true);
+	var pfid='#';
+	var pos=-1;
+	if(inst.get_selected(true).length>0){
+		obj=inst.get_selected(true);
+		obj=obj[0];
+		if(obj.type=='folder' || obj.type=='file'){
+			pfid=obj.id;
+			pos=-1
+		}else{
+			pfid=obj.parent;
+			var parent=inst.get_node(pfid);
+			if(obj.id=='manage'){
+				pos=parent.children.length;
+			}else if(jQuery.inArray(obj.id,parent.children)>-1){
+				pos=jQuery.inArray(obj.id,parent.children)+1;
+			}else if(pfid=='#' && jQuery('#manage').length>0){
+				pos=parent.children.length-1;
+			}
+		}
+	}else if(jQuery('.classtree-cname').hasClass('selected')){
+		pos=inst.get_node('#').children.length-1;
+	}
+	
+	obj=inst.get_node(pfid);
+	convert_waiting(DZZSCRIPT+'?mod=corpus&op=list&do=ctree&operation=import&cid={$cid}&pfid='+(pfid=='#'?0:pfid)+'&type=file&aid='+icodata['aid']+'&disp='+pos+'&filename='+encodeURI(icodata['filename']),function(json){
+			if(!json || json.error){
+				showmessage(json.error,'danger',0,1);
+			}else if(json.id>0){
+				if(pos<0){
+					pos='last';
+				}
+				inst.create_node(obj, json, pos, function (new_node) {
+					setTimeout(function () {
+						inst.deselect_all(true);
+						inst.select_node(inst.get_node(new_node.id));
+					});
+				});
+				showmessage(__lang.import_success,'success',3000,1);
+			}else{
+				inst.refresh();
+				showmessage(__lang.import_success,'success',3000,1);
+			}
+		},
+		function(){
+			showmessage(__lang.import_failure,'danger',0,1);
+		},5000);
+	
+}
+
+function editTopic(fid){
+	currentfid='edit_'+fid;
+	try{ jQuery('#editor1').remove();needsave=0;window.onbeforeunload=null}catch(e){};
+	jQuery('#topic_container').load(DZZSCRIPT+'?mod=corpus&op=list&do=newdoc&cid={$cid}&fid='+fid+'&t='+new Date().getTime(),function(){
+		jQuery('.bs-main-container').scrollTop(0);
+		jQuery('#'+fid).removeClass('isnew');
+	});
+}
+function deleteTopicVersion(fid,ver){
+	jQuery.getJSON(DZZSCRIPT+'?mod=corpus&op=list&do=ctree&operation=deleteVersion&cid={$cid}',{'fid':fid,'revid':ver,t:new Date().getTime()},function(json){
+		if(!json || json.error){
+			showmessage(json.error,'danger',3000,1);
+		}else if(json.msg=='success'){
+			getTopicListByFid(fid);
+		}
+	});
+}
+function applyTopicVersion(fid,ver){
+	jQuery.getJSON(DZZSCRIPT+'?mod=corpus&op=list&do=ctree&operation=applyVersion&cid={$cid}',{'fid':fid,'revid':ver,t:new Date().getTime()},function(json){
+		if(!json || json.error){
+			showmessage(json.error,'danger',3000,1);
+		}else if(json.msg=='success'){
+			getTopicListByFid(fid);
+		}
+	});
+}
+function deleteTopic(fid){
+	var inst = jQuery("#classtree").jstree(true);
+	var obj=inst.get_node(fid);
+	
+	if(needsave>0 && inst.is_selected(obj)){
+		needsave=0;
+	}
+	if(obj.parent!='#' || (obj.parent=='#' && (inst.get_prev_dom(obj,true) || inst.get_next_dom(obj,true)))) {
+		jQuery("#classtree").jstree(true).delete_node(jQuery("#classtree").jstree(true).get_node(fid));
+	}else{
+		showmessage(__lang.must_keep_the_last_node,'danger',3000,1);
+	}
+}
+function getTopicListByFid(fid,ver){
+
+	var url=DZZSCRIPT+'?mod=corpus&op=list&cid={$cid}&do=';
+	if(parseInt(fid)>0){
+		url+='view&fid='+fid+'&ver='+(ver?ver:'')+'&t='+new Date().getTime();
+		jQuery('#topic_container').removeClass('nopaddingtop');
+	}else{
+		url+=fid;
+		jQuery('#topic_container').addClass('nopaddingtop');
+	}
+	jQuery('#loading_info').show();
+	if(needsave){
+		if(confirm(__lang.current_content_is_not_saved)){
+		  try{ 
+			needsave=0;
+			jQuery('#editor1').remove();
+			jQuery('head [editor="md"],head [editor="baidu"],script[ajaxappend="1"]').remove();
+			if(editing_fid) jQuery.getJSON('{MOD_URL}&op=ajax&do=unlock&fid='+editing_fid,function(json){editing_fid=0;});
+		  }catch(e){};
+			jQuery('#topic_container').load(url,function(){
+				jQuery('.bs-main-container').scrollTop(0);
+				jQuery('#loading_info').hide();
+			});
+		}else{
+			jQuery('#loading_info').hide();
+		}
+	}else{
+		 try{ 
+			needsave=0;
+			jQuery('#editor1').remove();
+			jQuery('head [editor="md"],head [editor="baidu"],script[ajaxappend="1"]').remove();
+			if(editing_fid) jQuery.getJSON('{MOD_URL}&op=ajax&do=unlock&fid='+editing_fid,function(json){editing_fid=0;});
+		 }catch(e){};
+		jQuery('#topic_container').load(url,function(html){
+
+			jQuery('.bs-main-container').scrollTop(0);
+				if(searchkey){
+					jQuery('#topic_container').highlight(searchkey);
+					var top=0;
+					var first=jQuery('#topic_container').find('.highlight').first();
+					if(first.length){
+						window.setTimeout(function(){
+							var offset=first.offset();
+							top=offset.top-40;
+							jQuery('.bs-main-container').scrollTop(top);
+						},100);
+					}
+					
+				}
+				jQuery('#loading_info').hide();
+			});
+	}
+}
+
+jQuery(document).on('click','.navigation',function(e){
+	var fid=jQuery(this).data('fid');
+	var inst=jQuery("#classtree").jstree(true);
+	if(fid=='cover'){
+		jQuery('.classtree-cname').trigger('click');
+	}else{
+		jQuery.getJSON(DZZSCRIPT+'?mod=corpus&op=list&do=ctree&operation=getParentFid&fid='+fid+'&cid=$cid',function(json){
+			for(var i in json){
+				 if(document.getElementById(json[i][0])) open_node_dg(inst,document.getElementById(json[i][0]),json[i]);
+			}
+		});
+	}
+	return false;
+});
+if(!('oncontextmenu' in document.body) && ('ontouchstart' in document.body)) {
+	var el = null, tm = null;
+	jQuery(document).on("touchstart", ".jstree-anchor", function (e) {
+		el = e.currentTarget;
+		tm = +new Date();
+		jQuery(document).one("touchend", function (e) {
+			e.target = document.elementFromPoint(e.originalEvent.targetTouches[0].pageX - window.pageXOffset, e.originalEvent.targetTouches[0].pageY - window.pageYOffset);
+			e.currentTarget = e.target;
+			tm = ((+(new Date())) - tm);
+			if(e.target === el && tm > 600 && tm < 1000) {
+				e.preventDefault();
+				$(el).trigger('contextmenu', e);
+			}
+			el = null;
+			tm = null;
+		});
+	});
+}
+
+</script>

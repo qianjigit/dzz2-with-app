@@ -1,0 +1,57 @@
+<!--{template common/header_simple_start}-->
+<link href="static/css/common.css?{VERHASH}" rel="stylesheet" media="all">
+<link href="dzz/corpus/images/popbox.css?{VERHASH}" rel="stylesheet" media="all">
+<link rel="stylesheet" href="static/css/checkbox.css">
+<link href="dzz/corpus/images/corpus.css?{VERHASH}" rel="stylesheet" media="all">
+<script type="text/javascript" src="static/js/jquery.leftDrager.js?{VERHASH}"></script>
+<!--{template common/header_simple_end}-->
+<!--{template common/commer_header}-->
+<style type="text/css">
+.navbar-inverse{
+	background-color: #4664d2;
+	border-color: #f17327;
+}
+</style>
+
+<!-- <nav class="jilu-navbar bs-top-container">
+  	<a href="{BASESCRIPT}?mod={MOD_NAME}">
+  		<span><i class="dzz dzz-chevron-left" style="font-size: 32px;vertical-align: -7px;margin-right: 10px;"></i></span>
+      	<span>设置</span>
+  	</a>
+</nav> -->
+
+
+<div class="bs-container clearfix">
+    <!-- 左边部分 -->
+  <div class="bs-left-container affix-top clearfix">
+    	<!--{template setting_left}--> 
+  </div>
+
+    <!-- 左边拖动部分 -->
+    <div class="left-drager"></div>	
+	<div class="bs-main-container" style="padding:20px;">
+		<div class="main-content clearfix" style="padding:0;">
+			<!--{if $do=='basic'}-->
+			<!--{template setting_basic}-->
+			<!--{elseif $do=='manage'}-->
+			<!--{template setting_manage}-->
+			<!--{elseif $do=='report'}-->
+			<!--{template setting_report}-->
+			<!--{elseif $do=='wxapp'}-->
+			<!--{if $operation=='menu'}-->
+			<!--{template common/wx_menu}-->
+			<!--{else}-->
+			<!--{template common/wx_appinfo}-->
+			<!--{/if}-->
+			<!--{/if}-->
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	jQuery('.left-drager').leftDrager_layout();
+
+// 结束
+</script>
+<script src="static/bootstrap/js/bootstrap.min.js?{VERHASH}"></script>
+<!--codestrings-->
+<!--{template common/footer_simple}-->

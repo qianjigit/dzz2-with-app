@@ -1,0 +1,481 @@
+<!--{template common/mobile_simple_start}-->
+<script src="static/js/common.js?{VERHASH}"></script>
+<!--{if $code==1}-->
+<link href="dzz/corpus/scripts/editor.md/css/editormd.css?{VERHASH}" rel="stylesheet">
+<script src="dzz/corpus/scripts/editor.md/editormd.js?{VERHASH}"></script>
+<script src="dzz/corpus/scripts/editor.md/to-markdown/to-markdown.js"></script>
+
+<!--{else}-->
+<link href="dzz/system/ueditor/themes/default/css/ueditor.css?{VERHASH}" rel="stylesheet" media="all">
+<link href="dzz/system/ueditor/themes/default/css/ueditor_add.css?{VERHASH}" rel="stylesheet" media="all">
+<script src="dzz/system/ueditor/ueditor.config.js?{VERHASH}"></script>
+<script src="dzz/system/ueditor/ueditor.all.js?{VERHASH}"></script>
+<script src="dzz/system/ueditor/lang/zh-cn/zh-cn.js?{VERHASH}"></script>
+<!--<script src="dzz/system/ueditor/addCustomizeButton.js?{VERHASH}"></script>-->
+<script src="data/cache/smilies_var.js?{VERHASH}"></script>
+<!--{/if}-->
+<script type="text/javascript" >  
+var i=0;
+editing_fid='$fid';
+var timer=new Date().getTime();
+var needsave=0;
+</script>
+<style type="text/css">
+	html,
+	body {
+		overflow: auto;
+		background: #FFFFFF;
+		height: 100vh;
+	}
+</style>
+<!--{template common/mobile_simple_process}-->
+
+	<!--{if $code==1}-->
+       	<div id="test-editormd" style="border-left:0;border-right:0"><textarea style="display:none;">$str</textarea></div>
+       <!--{else}-->
+         <script type="text/plain" id="editor1" style="position:relative;height:100%;margin:0 auto">$str</script>
+       <!--{/if}-->
+	<form id="ueditorform" name="ueditorform" class="" style="border-bottom:0" action="{BASESCRIPT}?mod=corpus&op=list&do=newdoc" method="post" onsubmit="editor_validate(this);return false" >
+        <input type="hidden" name="edit" value="true" />
+        <input type="hidden" name="fid" value="$fid" />
+        <input type="hidden" name="cid" value="$cid" />
+        <input type="hidden" name="code" value="$code" />
+        <input id="autosave" type="hidden" name="autosave" value="0" />
+        <input id="reversion" type="hidden" name="newversion" value="0" />
+        <input type="hidden" name="handlekey" value="ueditorform" />
+        <input type="hidden" name="message" id="message" value="" />
+        <input type="hidden" name="formhash" value="{FORMHASH}" />
+       </form>
+
+<script type="text/javascript">
+	
+	function editor_validate(form,callback){
+		 
+		  var newreversion=document.getElementById('reversion').value;
+		   document.getElementById('autosave').value='0';
+		   <!--{if $code==1}-->
+		   document.getElementById('message').value=dzzEditor.getMarkdown();
+		   <!--{else}-->
+		  document.getElementById('message').value=UE.getEditor('editor1').getContent();
+		  <!--{/if}-->
+		  jQuery.post(form.action,jQuery('#ueditorform').serialize(),function(json){
+			  needsave=0;
+			  if(json.autosave<1){
+					window.setTimeout(function(){window.location.href=MOD_URL+'&op=list&cid=1&do=view&fid='+json.id;},500);
+			  }
+			  if(typeof callback =='function'){
+				  callback(json);
+			  }
+		  },'json');
+		  
+	}
+	window.onbeforeunload=function(){
+		if(needsave>0){
+			return __lang.the_current_content_is_not_saved;
+		}
+	}
+	var autoTimer=null;
+	function editor_AutoSave(callback){
+		if(autoTimer) window.clearTimeout(autoTimer);
+		autoTimer=window.setTimeout(function(){AutoSaveHander(callback);},5000);
+	}
+	function AutoSaveHander(callback){
+		
+		var form=document.getElementById('ueditorform');
+		if(!form) return;
+		 // var newreversion='0';
+		  document.getElementById('reversion').value='0';
+		  document.getElementById('autosave').value='1';
+		  <!--{if $code==1}-->
+		   document.getElementById('message').value=dzzEditor.getMarkdown();
+		   <!--{else}-->
+		  document.getElementById('message').value=UE.getEditor('editor1').getContent();
+		  <!--{/if}-->
+		   jQuery.post(form.action,jQuery('#ueditorform').serialize(),function(json){
+			   needsave=0;
+			  if(typeof callback =='function'){
+				  callback(json);
+			  }
+			
+		  },'json');
+		
+	}
+	var resizeTimer=null;
+	var  dzzEditor;
+	var plainPasteMode = false;   
+	var snapplugin;
+ 	jQuery(document).ready(function(e) {
+	 <!--{if $code==1}-->
+		 dzzEditor = editormd("test-editormd", {
+						mode: 'gfm',
+                        width: '100%',
+						height:'100%',
+                        path : 'dzz/corpus/scripts/editor.md/lib/',
+                        htmlDecode : "style,script,iframe|on*",            // 开启 HTML 标签解析，为了安全性，默认不开启    
+                        emoji : true,
+						watch:false,
+						drag:false,
+                        taskList : true,
+                        tocm            : true,         // Using [TOCM]
+                        tex : true,                   // 开启科学公式TeX语言支持，默认关闭
+                        flowChart : true,             // 开启流程图支持，默认关闭
+                        sequenceDiagram : true,       // 开启时序/序列图支持，默认关闭,
+                        imageUpload : true,
+                        imageFormats : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+                        imageUploadURL : SITEURL+DZZSCRIPT + "?mod=attach&op=controller&action=uploadimage&markdown=1",
+						toolbarIcons : function() {
+							var arrayIcons = ['save','savever'];
+							arrayIcons = arrayIcons.concat(editormd.toolbarModes["mini"]);
+							
+							//arrayIcons.splice(jQuery.inArray("emoji", arrayIcons), 1);       // Emoji表情关闭时移除按钮
+							//arrayIcons.splice(jQuery.inArray("fullscreen", arrayIcons), 1);  // 禁用切换全屏状态时移除按钮
+							arrayIcons.splice(jQuery.inArray("image", arrayIcons), 0, "plainPasteIcon");  // 加入纯文本粘贴模式按钮
+							return arrayIcons;
+						},
+						toolbarIconsClass : {
+							save:"fa-save",
+							savever:'fa-savever',
+							captureIcon : "fa-scissors",
+							plainPasteIcon : "fa-clipboard"
+						},
+						
+						toolbarHandlers : {
+							save : function() {
+								editor_validate(document.getElementById('ueditorform'),function(json){
+									if(json.error) showmessage(json.error,'danger',3000,1);
+									else{
+										showmessage(__lang.save_successfully,'success',1000,1);
+									}
+								});
+							},
+							savever : function() {
+								document.getElementById('ueditorform').reversion.value='1';
+								editor_validate(document.getElementById('ueditorform'),function(json){
+									if(json.error) showmessage(json.error,'danger',3000,1);
+									else{
+										showmessage(__lang.new_version_is_saved_successfully,'success',1000,1);
+									}
+								});
+							},
+							captureIcon : function() {
+								captureScreenImage();
+							},
+							plainPasteIcon : function() {
+								plainPasteMode = !plainPasteMode;
+								showPlainPasteMode();
+							}
+						},
+						lang : {
+							toolbar : {
+								save:__lang.save,
+								savever:__lang.save_the_new_version,
+								captureIcon : __lang.capture_screen,
+								plainPasteIcon : __lang.pastePlain,
+							}
+						},
+                        onload : function() {
+                            this.width("100%");
+							this.height(document.documentElement.clientHeight-jQuery('#ueditorform_btn').outerHeight(true));
+                            this.resize("100%", document.documentElement.clientHeight-jQuery('#ueditorform_btn').outerHeight(true));
+							
+							showPlainPasteMode();
+				
+							// 监听粘贴事件
+							this.cm.getInputField().addEventListener("paste", function (e) {
+								var clipboardData = e.clipboardData || window.clipboardData;
+								if (clipboardData) {
+									if (clipboardData.types == "Files") {
+										if(window.FormData && window.FileReader) {
+											  var hasImg = false,
+											  items = clipboardData.items;
+											  if(items){
+													var len = items.length,
+														file;
+													while (len--){
+														file = items[len];
+														if(file.getAsFile) file = file.getAsFile();
+														if(file && file.size > 0) {
+															clipboardToImage(file);
+															hasImg = true;
+														}
+													}
+													hasImg && e.preventDefault();
+											  }
+										}
+									}else if (jQuery.inArray("text/html", clipboardData.types) != -1) {
+										if (!plainPasteMode && clipboardHTMLToMd(clipboardData.getData("text/html"))) {
+											e.preventDefault();
+										}
+									}
+								}
+							});
+                        },
+						onresize:function(){
+							var me=this;
+							if(resizeTimer) return;
+							resizeTimer=window.setTimeout(function(){
+								me.height(document.documentElement.clientHeight-jQuery('#ueditorform_btn').outerHeight(true));
+								resizeTimer=0;
+							},300);
+						},
+						 onchange : function() {
+							 console.log(i);
+							  if(i>0) needsave=1;
+								 i++;
+								 if(i>10) editor_AutoSave(function(json){
+									 if(json.error){
+										 showmessage(json.error,'danger',3000,1,'right-top');
+									 }else{
+										 i=0;
+										 timer=new Date().getTime();
+										 showmessage(__lang.auto_save_success,'success',1000,1,'right-top');
+									 }
+								 });
+								 else if(needsave && (new Date().getTime()-timer)>60*1000) editor_AutoSave(function(json){
+									  if(json.error){
+										 showmessage(json.error,'danger',3000,1,'right-top');
+									 }else{
+										 i=0;
+									 	 timer=new Date().getTime();
+										 showmessage(__lang.auto_save_success,'success',1000,1,'right-top');
+									 }
+								 });
+						}
+                    });
+		
+		
+	 <!--{else}-->
+	 UEDITOR_CONFIG.mode.mini[0].unshift('save','savever','|');
+	 //UEDITOR_CONFIG.mode.simple[0].unshift('save','savever','|');
+	  var ue = UE.getEditor('editor1', {
+		  	UEDITOR_HOME_URL:SITEURL+'dzz/system/ueditor/',
+			serverUrl:SITEURL+DZZSCRIPT + "?mod=attach&op=controller",
+			focus: true,
+			zIndex : 1200,
+			formid:'ueditorform',
+			<!--{if $corpus['css']}-->
+			iframeCssUrl:"{$corpus['css']}" ,
+			<!--{else}-->
+			iframeCssUrl:'dzz/system/ueditor/themes/iframe.css',
+			<!--{/if}-->
+			
+			toolbars: UEDITOR_CONFIG.mode.mini,
+			initialFrameWidth:'100%', //初始化编辑器宽度,默认500
+		
+			//autoHeightEnabled:false,
+			initialFrameHeight:document.documentElement.clientHeight-96
+			/*topOffset:jQuery('.bs-main-container').offset().top+1,*/
+			
+		});  
+		
+		ue.addListener( 'contentChange', function(  ) {
+			 if(i>0) needsave=1;
+			 i++;
+			 if(i>10) editor_AutoSave(function(json){
+				  if(json.error){
+					 UE.getEditor('editor1').trigger('showmessage',{
+						content : json.error,
+						type: 'error',
+						timeout : 5000
+					});
+				 }else{
+					 i=0;
+					 timer=new Date().getTime();
+					 UE.getEditor('editor1').trigger('showmessage',{
+						content : __lang.auto_save_success,
+						timeout : 2000
+					});
+				}
+			 });
+			 else if(needsave && (new Date().getTime()-timer)>60*1000) editor_AutoSave(function(json){
+				if(json.error){
+					 UE.getEditor('editor1').trigger('showmessage',{
+						content : json.error,
+						type: 'error',
+						timeout : 5000
+					});
+				 }else{
+					 i=0;
+					 timer=new Date().getTime();
+					 UE.getEditor('editor1').trigger('showmessage',{
+						content : __lang.auto_save_success,
+						timeout : 2000
+					});
+				}
+			 });
+		 });
+		
+		 ue.ready(function(editor){
+			// console.log([document.documentElement.clientHeight,jQuery('#edui1_toolbarbox').outerHeight(true)]);
+			//ue.setHeight(document.documentElement.clientHeight-jQuery('#edui1_toolbarbox').outerHeight(true)-42);
+		 }); 
+	<!--{/if}--> 
+		 
+	});	
+ 	
+	 // 截取屏幕
+   	var captureScreenImage=function() {
+			 if(!snapplugin){
+				var container = document.getElementById('topic_container');
+			   
+				snapplugin = document.createElement("object");
+				try{snapplugin.type = "application/x-pluginbaidusnap";}catch(e){
+					return;
+				}
+				snapplugin.style.cssText = "position:absolute;left:-9999px;width:0;height:0;";
+				snapplugin.setAttribute("width","0");
+				snapplugin.setAttribute("height","0");
+				container.appendChild(snapplugin);
+			}
+			var url = SITEURL+DZZSCRIPT + "?mod=attach&op=controller&action=uploadimage";
+			var local = getLocation(url);
+			setTimeout(function () {
+				try{
+					res =snapplugin.saveSnapshot(local.hostname, local.path, local.port);
+					 res = eval("("+ res +")");
+					if(res.state=='SUCCESS'){
+						dzzEditor.insertValue("![](" + res.url + ")");
+					}else{
+						showmessage(res.state,'danger',3000,1);
+					}
+				}catch(e){
+					dzzEditor.createDialog({
+						"title":__lang.screenshot,
+						"height":'auto',
+						'content':' <p class="text-warning">'+__lang.install_UEditor+'</p><p><a href="dzz/system/ueditor/third-party/snapscreen/UEditorSnapscreen.exe" target="_blank" id="downlink" class="editormd-btn">'+__lang.click_here_to_download+'</a></p><dl><dd>'+__lang.install_UEditor_first+'</dd><dd>'+__lang.second_install_UEditor_use+'</dd></dl>'
+						
+					});
+					return;
+				}
+				
+			}, 50);
+		};	
+	var getLocation=function(url) {
+			var search,
+				a = document.createElement('a');
+				params = '';
+	
+			a.href = url;
+			if (BROWSER.ie) {
+				a.href = a.href;
+			}
+			search = a.search;
+			if (params) {
+				search = search + (search.indexOf('?') == -1 ? '?':'&')+ params;
+				search = search.replace(/[&]+/ig, '&');
+			}
+			return {
+				'port': a.port,
+				'hostname': a.hostname,
+				'path': a.pathname + search ||  + a.hash
+			}
+		}
+    ////////////////////////////////////////////////
+    // 剪贴板图片
+	var clipboardToImage = function (file) {
+			 /* 创建Ajax并提交 */
+			var xhr = new XMLHttpRequest(),
+				fd = new FormData(),
+				url = SITEURL+DZZSCRIPT + "?mod=attach&op=controller&action=uploadimage&markdown=1";
+				fd.append('editormd-image-file', file, file.name || ('blob.' + file.type.substr('image/'.length)));
+				fd.append('type', 'ajax');
+				xhr.open("post", url, true);
+				xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+				xhr.addEventListener('load', function (e) {
+					try{
+						var json = (new Function("return " + trim(e.target.response)))();
+						if (json.success == 1 && json.url) {
+							 dzzEditor.insertValue("![](" + json.url + ")");
+						} else {
+							showmessage(json.message,'danger',1000,1);
+						}
+					}catch(er){
+						showmessage(__lang.upload_HTTP_error,'danger',1000,1);
+					}
+				});
+				xhr.send(fd);
+		};
+
+    ////////////////////////////////////////////////
+    // 剪贴板解析HTML转换到Markdown
+	var clipboardHTMLToMd = function (htmlText) {
+			if (htmlText != "") {
+				var referencelinkRegEx = /reference-link/;
+				dzzEditor.insertValue(toMarkdown(htmlText, {
+					gfm: true,
+					converters:[
+					{
+						filter: 'div',
+						replacement: function(content) {
+							return content + '\n';
+						}
+					},
+					{
+						filter: 'span',
+						replacement: function(content) {
+							return content;
+						}
+					},
+					{
+						filter: function (node) {
+						  return (node.nodeName === 'A' && referencelinkRegEx.test(node.className));
+						},
+						replacement: function(content) {
+							return "";
+						}
+					}]})
+				);
+				return true;
+			}
+			return false;
+		};
+
+    ////////////////////////////////////////////////
+	// 显示纯文本粘贴模式
+	var showPlainPasteMode = function () {
+			if (plainPasteMode) {
+				jQuery(".fa-clipboard").parent().addClass("active");
+			} else{
+				jQuery(".fa-clipboard").parent().removeClass("active");
+			};
+		};
+	
+	window.onbeforeunload=function(){
+		if(needsave>0) return __lang.the_current_content_is_not_saved;
+	}
+	window.onunload = function(){
+		jQuery.ajax({
+				 type:'get',
+				 async: false,
+				 url:'{MOD_URL}{MOD_URL}&op=ajax&do=unlock&fid=$fid',
+				 dataType:"json"
+			 });
+	}
+	Date.prototype.format = function(format) {
+		   var date = {
+				  "M+": this.getMonth() + 1,
+				  "d+": this.getDate(),
+				  "h+": this.getHours(),
+				  "m+": this.getMinutes(),
+				  "s+": this.getSeconds(),
+				  "q+": Math.floor((this.getMonth() + 3) / 3),
+				  "S+": this.getMilliseconds()
+		   };
+		   if (/(y+)/i.test(format)) {
+				  format = format.replace(RegExp.$1, (this.getFullYear() + '').substr(4 - RegExp.$1.length));
+		   }
+		   for (var k in date) {
+				  if (new RegExp("(" + k + ")").test(format)) {
+						 format = format.replace(RegExp.$1, RegExp.$1.length == 1
+								? date[k] : ("00" + date[k]).substr(("" + date[k]).length));
+				  }
+		   }
+		   return format;
+	}
+	
+	
+</script>
+<!--<script src="{MOD_PATH}/scripts/mobile_my_view.js?{VERHASH}" type="text/javascript" charset="utf-8"></script>-->
+</body>
+
+</html>

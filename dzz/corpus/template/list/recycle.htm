@@ -1,0 +1,118 @@
+<link href="dzz/corpus/images/recycle.css?{VERHASH}" rel="stylesheet" media="all">
+<script type="text/javascript" src="admin/scripts/admin.js"></script>
+	<div class="main-header2 clearfix" style="padding:3px;" >
+     <ul class="nav nav-pills " >
+     	<li class="pull-left">
+        	<a class="js-empty" style="padding:4px 10px;" href="{BASESCRIPT}?mod=corpus&op=list&do=recycle&operation=empty&cid=$cid">{lang empty_recycle}</a>
+        </li>
+         <li class="pull-right">
+         <form id="recycle_search_form" name="search" action="{BASESCRIPT}" method="get" onsubmit="return search_validate(this)">
+                <input type="hidden" name="mod" value="corpus" />
+                <input type="hidden" name="op" value="list" />
+                <input type="hidden" name="do" value="recycle" />
+                <input type="hidden" name="cid" value="$cid" />
+                <div class="input-group" style="width:180px;">
+                     <input name="keyword"  type="text" value="$keyword" class="js-search-input form-control input-sm"  placeholder="{lang document_or_directory_name}">
+                     <a href="javascript:;" class="input-group-addon js-search-addon" >
+                     <!--{if $keyword}-->
+                      <i class="fa fa-remove"></i>
+                     <!--{else}-->
+                      <i class="fa fa-search"></i>
+                     <!--{/if}-->
+                     </a>
+                 </div>
+          </form>
+         </li>
+     </ul>
+    </div>
+    <div class="content clearfix" >
+      <form id="deleteform" name="deleteform" class="form-horizontal" action="{BASESCRIPT}?mod=corpus&op=list&do=recycle&cid=$cid" method="post" onsubmit="return validate(this);">
+        <input type="hidden" name="recyclesubmit" value="true" />
+        <input type="hidden" name="formhash" value="{FORMHASH}" />
+       <table class="table table-hover">
+                <thead>
+                  <th>&nbsp;</th><th>{lang menu_filemanagedisp_0}</th> <th>{lang deletetime}</th><th>{lang deleter}</th><th>{lang operation}</th>
+                </thead>
+             <!--{loop $list $value}-->
+                <tr>
+                  <td width="40"><input type="checkbox" name="del[]" value="$value[fid]"  /></td>
+                  <td><!--{if $value[type]=='file'}--><i class="glyphicon glyphicon-file"></i><!--{else}--><i class="glyphicon glyphicon-book"></i><!--{/if}-->&nbsp;$value[fname]</td>
+                  <td>{eval echo dgmdate($value[deletetime],'u');}</td>
+                  <td><a href="user.php?uid=$value[deleteuid]" target="_blank"> $value[deleteusername]</a></td>
+                 
+                  <td >  
+                  	<a class="js-recycle-delete" href="{BASESCRIPT}?mod=corpus&op=list&do=recycle&operation=delete&cid=$cid&fid=$value[fid]"  title="{lang completely_delete}">{lang completely_delete}</a>&nbsp;&nbsp;
+                  	<a class="js-recycle-restore" href="{BASESCRIPT}?mod=corpus&op=list&do=recycle&operation=restore&cid=$cid&fid=$value[fid]" title="{lang recover}">{lang recover}</a>
+                  </td>
+                </tr>
+             <!--{/loop}-->
+             <thead>
+             <tr>
+                  <td colspan="20"><label for="chkall" class="checkbox-inline"><input type="checkbox" name="chkall" id="chkall"  onclick="checkAll('prefix', this.form, 'del')">&nbsp;{lang delete_ok}</label>&nbsp;&nbsp;
+                 <button type="submit" class="btn btn-danger">{lang completely_delete}</button>
+                 $multi
+                 </td>
+             </tr>
+             </thead>
+            </table>
+          </form>
+    </div>
+
+<script type="text/javascript">
+var search_timer=null;
+jQuery('.js-search-input').on('keyup',function(e){
+	if(search_timer) window.clearTimeout(search_timer);
+	window.setTimeout(function(){
+		jQuery('#recycle_search_form').get(0).onsubmit();
+	},1000);
+	
+});
+jQuery('.js-search-addon').on('click',function(){
+	if(jQuery(this).find('i').hasClass('fa-remove')){
+		jQuery('.js-search-input').val('');
+		jQuery('#recycle_search_form').get(0).onsubmit();
+	}else{
+		jQuery('#recycle_search_form').get(0).onsubmit();
+	}
+	return false;
+});
+jQuery('.js-recycle-delete').on('click',function(){
+	if(confirm(__lang.sure_to_delete_this_document_completely)){
+		jQuery.post(this.href,function(){
+			getTopicListByFid('recycle');
+		});
+	}
+	return false;
+});
+jQuery('.js-recycle-restore').on('click',function(){
+	if(confirm(__lang.sure_you_want_to_restore_this_document)){
+		jQuery.post(this.href,function(){
+			
+			getTopicListByFid('recycle');
+			jQuery('#classtree').jstree(true).refresh();
+		});
+	}
+	return false;
+});
+jQuery('.js-empty').on('click',function(){
+	if(confirm(__lang.sure_you_want_to_empty_the_recycle_bin)){
+		jQuery.post(this.href,function(){
+			getTopicListByFid('recycle');
+		});
+	}
+	return false;
+});
+function validate(form){
+	if(confirm(__lang.sure_you_want_to_delete_the_selected_document_completely)){
+		jQuery.post(form.action,jQuery(form).serialize(),function(){
+			getTopicListByFid('recycle');
+		});
+	}
+	return false;
+}
+function search_validate(form){
+	jQuery('#topic_container').load(form.action+'?'+jQuery(form).serialize());
+	return false;
+}
+
+</script> 

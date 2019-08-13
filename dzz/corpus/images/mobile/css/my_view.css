@@ -1,0 +1,254 @@
+.view-content-text{
+	line-height:2em;
+	font-size:16px;
+	/*text-shadow:1px 1px 1px #FFF;*/
+	/*font-family:Tahoma,'宋体','Simsun';*/
+	font-family:"lucida grande", "lucida sans unicode", "lucida", "Helvetica Neue", "helvetica", "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", "sans-serif";
+}
+.hide{
+	display: none !important; 
+}
+ul, li, ul li, ol {
+    list-style: none;
+}
+.footer-simple {
+	position: relative;
+	height: 10vh;
+}
+.footer-simple .weui-tabbar__label {
+    font-size: 12px;
+    line-height: 1.3;
+}
+.header-content {
+	-webkit-overflow-scrolling: touch;
+	overflow: auto;
+	height: 90vh;
+}
+/*ctree样式开始*/
+.tree ul{
+    padding: 0;
+    margin: 0;
+	margin-left: 25px;
+}
+.tree>ul{
+    margin-right: 25px;
+}
+.tree li {
+    list-style-type:none;
+    margin:0;
+    padding:10px 0px 0 5px;
+    position:relative;
+    line-height: 45px;
+}
+.tree li::before, .tree li::after {
+    content:'';
+    left:-10px;
+    position:absolute;
+    right:auto
+}
+.tree li::before {
+    border-left:1px solid #999;
+    bottom:50px;
+    height:100%;
+    top: 2px;
+    width:1px
+}
+.tree li::after {
+    border-top:1px solid #999;
+    height:20px;
+    top:33px;
+    width:15px
+}
+.tree li span {
+    display:block;
+    overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	padding-left: 30px;
+    padding-right: 40px;
+}
+.tree li span.weui-loadmore__tips{
+	display: inline-block;
+}
+.tree li i.icon-book{
+    display:inline-block;
+    width: 24px;
+    height: 30px;
+    vertical-align: middle;
+    position: absolute;
+	left: 9px;
+    top: 20px;
+}
+.tree li i.open-popup{
+  	position: absolute;
+    right: 0;
+    top: 16px;
+    font-size: 20px;
+    width: 35px;
+    height: 35px;
+    line-height: 35px;
+    text-align: center;
+}
+.tree li.parent_li>span {
+    cursor:pointer
+}
+.tree>ul>li::before, .tree>ul>li::after {
+    border:0
+}
+.tree li:last-child::before {
+    height:32px
+}
+.tree li.parent_li>span:hover, .tree li.parent_li>span:hover+ul li span {
+    background:#eee;
+    border:1px solid #94a0b4;
+    color:#000
+}
+.icon-book{
+	background-image: url(./../../icons_3.png);
+    background-repeat: no-repeat;
+}
+.icon-arrows-close {
+    color: #555555;
+    position: absolute;
+    left: -22px;
+    top: 21px;
+    font-size: 26px;
+    z-index: 10;
+    width: 35px;
+   	height: 35px;
+}
+.icon-arrows-open{
+	color: #555555;
+    position: absolute;
+    left: -25px;
+    top: 22px;
+    font-size: 26px;
+    z-index: 10;
+    -webkit-transform:rotate(45deg); /* Safari 和 Chrome */
+   transform:rotate(45deg);
+   width: 35px;
+   height: 35px;
+}
+.jstree-icon-folder{
+    background-position: 3px -47px;
+}
+.jstree-icon-openfolder{
+    background-position: 3px -20px;
+}
+.jstree-icon-file{
+    background-position: 3px -540px;
+}
+.back-top{
+    position: fixed;
+    right: 20px;
+    bottom: 100px;
+    width: 50px;
+    height: 50px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 50%;
+    font-size: 22px;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+}
+.weui-dropup {
+    box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    border-radius: 2px;
+    position: absolute;
+    bottom: 100%;
+	left: auto;
+    right: 10%;
+    min-width: 180px;
+    margin-bottom: 5px;
+    z-index: 9999;
+}
+.weui-dropup>li {
+    
+    overflow: hidden;
+}
+.weui-dropup>li>p {
+    display: block;
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid #f2f2f2;
+    color: #666666;
+    text-align: left;
+    font-size: 15px;
+}
+.weui-dropup>li>p .dzz{
+    font-size: 20px;
+    vertical-align: sub;
+}
+/*ctree样式结束*/
+.footer-simple .weui-tabbar__icon .dzz {
+    font-size: 27px;
+}
+.footer-simple-find a .weui-tabbar__icon>i, .footer-simple-find a i.weui-tabbar__icon, .footer-simple-find a .weui-tabbar__label {
+    opacity: 0.7;
+}
+.footer-simple .weui-tabbar__label {
+    font-size: 12px;
+    line-height: 1.3;
+}
+.footer-simple-find a.active .weui-tabbar__icon>i, .footer-simple-find a.active i.weui-tabbar__icon, .footer-simple-find a.active .weui-tabbar__label {
+    color: #333 !important;
+    opacity: 1;
+}
+/*显示内容样式开始*/
+.shareClose {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    font-size: 22px;
+}
+.view-content {
+	padding: 15px;
+	height: 100%;
+}
+
+.view-content .view-content-title {
+	font-size: 19px;
+	border-bottom: 1px solid #333;
+	padding-bottom: 10px;
+	margin-bottom: 10px;
+	position: relative;
+	width: 100%;
+	float: left;
+}
+.view-content .view-content-title span{
+	display: block;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	padding-right: 40px;
+}
+.view-content .view-content-title .view-operate {
+	position: absolute;
+	right: 0;
+	top: 0;
+	display: block;
+	width: 25px;
+	text-align: center;
+	line-height: 30px;
+}
+
+.view-content .view-content-text {
+	height: 100%;
+}
+
+.view-content .view-content-text img {
+	max-width: 100%;
+}
+.edui-default .edui-editor-iframeholder{
+	margin: 0;
+}
+body.view{
+	padding: 15px;
+}
+/*显示内容样式结束*/

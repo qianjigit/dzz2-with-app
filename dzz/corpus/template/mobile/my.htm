@@ -1,0 +1,130 @@
+<!--{template common/mobile_simple_start}-->
+<link rel="stylesheet" type="text/css" href="static/css/mabile_common.css?{VERHASH}" />
+<link href="{MOD_PATH}/images/mobile/css/my.css?{VERHASH}" rel="stylesheet" media="all" />
+<!--{template common/mobile_simple_process}-->
+<div class="header-content">
+	<div class="weui-search-bar" id="searchBar">
+		<form class="weui-search-bar__form" action="" onsubmit="my.my_search(this,'index');return false;">
+			<div class="weui-search-bar__box">
+				<i class="weui-icon-search"></i>
+				<input type="search" class="weui-search-bar__input" id="searchInput" placeholder="{lang search}" required="">
+				<a href="javascript:;" class="weui-icon-clear" id="searchClear"></a>
+			</div>
+			<label class="weui-search-bar__label" id="searchText">
+	            <i class="weui-icon-search"></i>
+	            <span>{lang search}</span>
+	        </label>
+		</form>
+		<a href="javascript:;" class="weui-search-bar__cancel-btn" id="searchCancel" data-index="index">{lang cancel}</a>
+	</div>
+	<!--创建小组的链接{MOD_URL}&op=menu&do=addorg-->
+	<div class="weui-cells black">
+		<div class="black-title">
+			<p><i class="dzz dzz-grade dzz-grade-stared"></i>&nbsp;{lang star_sign}</p>
+		</div>
+		<div class="weui-cell book-content">
+			<!--{loop $stared $value}-->
+			<a href="javascript:;" data-href="{MOD_URL}&op=list&cid=$value[cid]" class="book <!--{if isset($colorList[$value['cid']])}-->no-back<!--{/if}-->">
+				<div class="no-background" style="background: $colorList[$value['cid']];"></div>	
+				<div class="book-arrange" style="background-color: $value[color];">
+					<!--{if $value['aid']}-->
+						<img src="{DZZSCRIPT}?mod=io&op=thumbnail&width=512&height=512&path={eval echo dzzencode('attach::'.$value['aid']);}" />
+					<!--{else}-->
+						<span class="back-title">$value[name]</span>
+					<!--{/if}-->
+				</div>
+				<p class="book-arrange-title">$value[name]</p>
+			</a>
+			<!--{/loop}-->
+		</div>
+	</div>
+	<div class="weui-cells black">
+		<div class="black-title">
+			<p><i class="dzz dzz-person dzz-person-arrange"></i>&nbsp;{lang mine}</p>
+		</div>
+		<div class="weui-cell book-content">
+			<a href="javascript:;" data-href="{MOD_URL}&op=menu&do=newcorpus&orgid=0" class="book add">					
+				<div class="book-arrange">
+					<span class="dzz dzz-add" style="font-size: 70px;color: #E1E1E1;"></span>
+				</div>
+				<p class="book-arrange-title">{lang create_corpus}</p>
+			</a>
+			<!--{loop $my $value}-->
+			<a href="javascript:;" data-href="{MOD_URL}&op=list&cid=$value[cid]" class="book <!--{if isset($colorList[$value['cid']])}-->no-back<!--{/if}-->">		
+				<div class="no-background" style="background: $colorList[$value['cid']];"></div>	
+				<div class="book-arrange" style="background-color: $value[color];">
+					<!--{if $value['aid']}-->
+						<img src="{DZZSCRIPT}?mod=io&op=thumbnail&width=512&height=512&path={eval echo dzzencode('attach::'.$value['aid']);}" />
+					<!--{else}-->
+						<span class="back-title">$value[name]</span>
+					<!--{/if}-->
+					
+				</div>
+				<p class="book-arrange-title">$value[name]</p>
+			</a>
+			<!--{/loop}-->
+		</div>
+	</div>
+	<!--{loop $orglist $org}-->
+	<div class="weui-cells black">
+		<div class="black-title">
+			<p><i class="dzz dzz-group dzz-person-arrange"></i>&nbsp;$org[name]</p>
+		</div>
+		<div class="weui-cell book-content">
+			<a href="javascript:;" data-href="{MOD_URL}&op=menu&do=newcorpus&orgid=$org[orgid]" class="book add">
+				<div class="book-arrange">
+					<span class="dzz dzz-add" style="font-size: 70px;color: #E1E1E1;"></span>
+				</div>
+				<p class="book-arrange-title">{lang create_corpus}</p>
+			</a>
+			<!--{loop $org[list] $value}-->
+			<a href="javascript:;" data-href="{MOD_URL}&op=list&cid=$value[cid]" class="book <!--{if isset($colorList[$value['cid']])}-->no-back<!--{/if}-->">
+				<div class="no-background" style="background: $colorList[$value['cid']];"></div>	
+				<div class="book-arrange" style="background-color: $value[color];">
+					<!--{if $value['aid']}-->
+						<img src="{DZZSCRIPT}?mod=io&op=thumbnail&width=512&height=512&path={eval echo dzzencode('attach::'.$value['aid']);}" />
+					<!--{else}-->
+						<span class="back-title">$value[name]</span>
+					<!--{/if}-->
+				</div>
+				<p class="book-arrange-title">$value[name]</p>
+			</a>
+			<!--{/loop}-->
+		</div>
+	</div>
+	<!--{/loop}-->
+</div>
+<div class="footer-simple">
+	<div class="weui-tabbar footer-simple-find">
+		<a href="{MOD_URL}" class="weui-tabbar__item active">
+			<div class="weui-tabbar__icon">
+				<i class="dzz dzz-book"></i>
+			</div>
+			<p class="weui-tabbar__label">{lang appname}</p>
+		</a>
+		<a href="{MOD_URL}&op=archive" class="weui-tabbar__item ">
+			<div class="weui-tabbar__icon">
+				<i class="dzz dzz-archive3"></i>
+			</div>
+			<p class="weui-tabbar__label">{lang archive}</p>
+		</a>
+		<a href="{MOD_URL}&op=delete" class="weui-tabbar__item ">
+			<div class="weui-tabbar__icon">
+				<i class="dzz dzz-delete"></i>
+			</div>
+			<p class="weui-tabbar__label">{lang recycle}</p>
+		</a>
+	</div>
+</div>
+<script type="text/javascript">
+	var Htmlload = false;
+	var Keyword = '{$keyword}';
+	window.onload = function() {
+		my.my();
+	}
+</script>
+<script src="{MOD_PATH}/scripts/mobile_my.js?{VERHASH}" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" src="static/js/imgReady.js?{VERHASH}"></script>
+</body>
+
+</html>

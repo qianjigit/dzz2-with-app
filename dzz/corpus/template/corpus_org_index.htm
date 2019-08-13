@@ -1,0 +1,97 @@
+    <div class="member-boards-view">
+     <!--{if $perm}-->
+        <div class="window-module window-module-my ">
+            <div class="window-module-title window-module-title-no-divider">
+            <span class="icon-lg window-module-title-icon fa fa-user"></span>
+            <h3>{lang participate_in}</h3></div>
+            <ul id="board_list_{$orgid}" class="board-list list-unstyled u-gutter clearfix">
+           
+             <!--{if ($perm>1 && $org[mperm_c]>0) || $perm>2}--><li class="js-add-board"><a class="board-list-item--add-board js-popbox" data-href="{MOD_URL}&op=menu&do=newcorpus&orgid=$orgid" title="{lang create_new_corpus}" data-placement="cover"   data-auto-adapt="true" href="javascript:;">{lang create_new_corpus}</a></li><!--{/if}-->
+           
+             <!--{loop $my $value}-->
+                <li data-cid="$value[cid]" class="{eval echo in_array($value[cid],$stared_cids)?'starred':'';}">
+                    <!--{if $value['modreasons']}-->
+                     <span class="item-guide forbid"> </span>
+                    <!--{elseif $value['viewperm']==0}-->
+                    <span class="item-guide perm_0"> </span>
+                    <!--{elseif $value['viewperm']==1}-->
+                    <span class="item-guide perm_1"> </span>
+                    <!--{elseif $value['viewperm']==2}-->
+                        <span class="item-guide perm_2"> </span>
+                    <!--{/if}-->                            
+                   <a class="js-open-board highlight-icon <!--{if $value[color]}-->color-white<!--{/if}-->" href="{MOD_URL}&op=list&cid=$value[cid]" style="background-color: $value[color];" target="_blank">
+                        <img class="cover" src="<!--{if $value['aid']}-->{DZZSCRIPT}?mod=io&op=thumbnail&width=512&height=512&path={eval echo dzzencode('attach::'.$value['aid']);}<!--{else}-->dzz/images/b.gif<!--{/if}-->" onload="setImage(this,150,200);" />
+                        <span class="fade"></span>
+                        <span class="unread-indicator js-unread" title="{lang new_change}"></span>
+                        <span class="icon-sm icon-star fa fa-star-o js-star-board <!--{if in_array($value[cid],$stared_cids)}-->icon-star-active<!--{/if}--> js-star" title="{lang star_sign_or_cancel}" data-cid="$value[cid]"></span>
+                        <!--{if $value[perm]>2 || $perm>2}--><span class="icon-cog js-popbox" data-href="{MOD_URL}&op=menu&do=topic&operation=setting&cid=$value[cid]&from=cover" data-placement="right" data-auto-adapt="true"   title="{lang set_up}" data-cid="$value[cid]"><i class="fa fa-cog"></i></span><!--{/if}-->
+                        <span class="details" title="$value[name]">$value[name]</span>
+                            
+                    </a>
+                </li>
+                <!--{/loop}-->
+               
+            </ul>
+        </div>
+        <!--{/if}-->
+        
+        <div class="window-module window-module-org">
+        
+            <div class="window-module-title window-module-title-no-divider">
+                <!--{if $perm>0}-->
+                <span class="icon-lg window-module-title-icon icon-organization fa fa-group fa-user"></span>
+                <h3>{lang other_visible}</h3>
+                <!--{/if}-->
+            </div>
+            <!--{if $visible}-->
+            <ul class="board-list u-gutter clearfix list-unstyled js-board-list">
+                <!--{loop $visible $value}-->
+                <li  data-cid="$value[cid]" class="{eval echo in_array($value[cid],$stared_cids)?'starred':'';}">
+                <!--{if $value['modreasons']}-->
+                             <span class="item-guide forbid"> </span>
+                            <!--{elseif $value['viewperm']==2}-->
+                            	<span class="item-guide perm_2"> </span>
+                            <!--{/if}-->
+                   <a class="js-open-board highlight-icon <!--{if $value[color]}-->color-white<!--{/if}-->" href="{MOD_URL}&op=list&cid=$value[cid]" style="background-color: $value[color];" target="_blank">
+                            <img class="cover" src="<!--{if $value['aid']}-->{DZZSCRIPT}?mod=io&op=thumbnail&width=512&height=512&path={eval echo dzzencode('attach::'.$value['aid']);}<!--{else}-->dzz/images/b.gif<!--{/if}-->" onload="setImage(this,150,200);" />
+                            <span class="fade"></span>
+                            <span class="unread-indicator js-unread" title="{lang new_change}"></span>
+                             
+                              <!--{if $value[perm]>2 || $perm>2 || $_G['adminid']==1}--><span class="icon-cog js-popbox" data-href="{MOD_URL}&op=menu&do=topic&operation=setting&cid=$value[cid]&from=cover" data-placement="right" data-auto-adapt="true"   title="{lang set_up}" data-cid="$value[cid]"><i class="fa fa- fa fa-cog"></i></span><!--{/if}-->
+                           <span class="details" title="$value[name]">$value[name]</span>
+                            
+                        </a>
+                </li>
+                <!--{/loop}-->
+            </ul>
+            <!--{else}-->
+            	<p class="help-block u-gutter" style="margin-left:20px;">{lang no_visible_corpus}</p>
+            <!--{/if}-->
+         </div>
+    </div>
+   
+   
+<script type="text/javascript">
+
+jQuery(document).ready(function(e) {
+	jQuery(document).on('click','.js-star',function(){
+		var el=jQuery(this);
+		var cid=el.data('cid');
+		var action='';
+		if(el.hasClass('icon-star-active')){
+			action='remove';
+			el.removeClass('icon-star-active');
+			el.closest('li').removeClass('starred');
+		}else{
+			action='add';
+			el.addClass('icon-star-active');
+			el.closest('li').addClass('starred');
+			
+		}
+		jQuery.post('{MOD_URL}&op=ajax&do=addStar',{"cid":cid,'action':action});
+		return false;
+	});
+	
+});
+
+</script>

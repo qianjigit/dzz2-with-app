@@ -1,0 +1,37 @@
+<!--{template common/header_ajax}-->
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">{lang close}</span></button>
+	<h4 class="modal-title" id="return_$_GET[handlekey]"><!--{if $flag == 1}-->{lang create_the_same_level}<!--{else}-->{lang create_subordinate}<!--{/if}--></h4>
+</div>
+<form role="form" action="" method="post" onsubmit="jstree_create_dir(this);return false;">
+	<input type="hidden" id="flag" value="$flag" />
+	<input type="hidden" id="pfid" value="$pfid" />
+	<div class="m_c modal-body clearfix" style="padding-top: 30px;padding-bottom: 20px;">
+		<div class="input-black input-fixation col-xs-8" style="margin-bottom: 15px;">
+			<label class="control-label input-label">{lang title}:</label>
+			<div class="input-animate" style="margin-left: 47.6719px; padding-right: 30px;">
+				<input type="text" class="form-control input-fname" name="" placeholder="">
+				<p class="input-error"></p>
+			</div>
+		</div>
+		<div class="col-xs-12">
+			<div class="radio-custom radio-primary" style="float: left;">
+				<input type="radio" class="inputRadios" name="inputRadios" checked="" value="0">
+				<label>{lang text}</label>
+			</div>
+			<div class="radio-custom radio-primary" style="float: left;margin-left: 50px;">
+				<input type="radio" class="inputRadios" name="inputRadios" value="1">
+				<label>MarKDown</label>
+			</div>
+		</div>
+		
+	</div>
+	<div class="modal-footer">
+		<button type="submit" name="gqbgform_btn" value="{lang determine}" class="btn btn-primary btn-width" data-loading-text="{lang in_submission}<div class='loader'><div class='loader-inner ball-beat'><div></div><div></div><div></div></div></div>"><strong>{lang determine}</strong></button> &nbsp;&nbsp;
+		<button type="button" data-dismiss="modal" class="btn btn-default"><strong>{lang cancel}</strong></button>
+	</div>
+</form>
+<script type="text/javascript">
+	InputAnimate.init(jQuery('.input-black'))
+</script>
+<!--{template common/footer_ajax}-->

@@ -1,0 +1,138 @@
+<!--{if $code==1}-->
+<link rel="stylesheet" href="dzz/corpus/scripts/editor.md/css/editormd.preview.css" />
+<!--{else}-->
+<link href="dzz/system/ueditor/third-party/dzzattach/dzzattach.css?{VERHASH}"  rel="stylesheet"  media="all">
+
+<!--{/if}-->
+	
+    	<div class="document-operation"> 
+         <!--<a class="drager-op pull-left" href="javascript:;" ><i class="fa fa-bars"></i></a>-->                 
+        <!--{if $version>0}-->
+        	<a class="tool tool-remove pull-right" href="javascript:;" onclick="if(confirm(__lang.sure_you_want_to_delete_the_current_version_of_the_document)){deleteTopicVersion('{$class[fid]}','{$current[revid]}');return false;}else{return false}" title="{lang delete_this_version}"></a>
+
+            <a class="tool tool-this pull-right" title="{lang use_this_version}" href="javascript:;" onclick="if(confirm(__lang.sure_you_want_to_use_this_version_as_the_final_version)){applyTopicVersion('{$class[fid]}','{$current[revid]}');return false;}else{return false}"></a>
+       	 	<a class="tool tool-back pull-right" href="javascript:;" onclick="getTopicListByFid('$class[fid]')" title="{lang return}"></a>
+        <!--{else}-->
+            <!-- <a class="pull-right tool-shield tool" href="{MOD_URL}&op=report&cid=$cid" title="{lang report_the_corpus}" target="_blank"></a> -->
+            <!--{if $downperm && !$lockinfo}--><a class="pull-right js-popbox tool-download tool" href="javascript:;" data-placement="bottom" data-auto-adapt="true" data-href="{MOD_URL}&op=menu&do=topic&operation=download&cid=$cid&fid=$fid" title="{lang download_this_paper}"></a>
+            <!--{/if}-->
+            <a class="pull-right js-popbox tool-share tool" href="javascript:;" data-placement="bottom" data-auto-adapt="true" data-href="{MOD_URL}&op=menu&do=topic&operation=share&cid=$cid&fid=$fid"  title="{lang share_this_post_to}"></a>
+             <!--{if $corpus[perm]>1 && $corpus['archivetime']<1 && !$lockinfo}--><a class="pull-right tool tool-remove" href="javascript:;" onclick="if(confirm(__lang.sure_you_want_to_delete_this_document)){deleteTopic('{$class[fid]}');return false;}else{return false}" title="{lang delete}"></a> <!--{/if}-->
+             <!--{if $corpus[perm]>1 && $corpus['archivetime']<1 && !$lockinfo}--><a class="pull-right tool tool-edit" href="{MOD_URL}&op=list&cid=$cid&fid={$class[fid]}" title="{lang compile}" onclick="editTopic('$class[fid]','edit');return false;"></a><!--{/if}-->
+          
+        <!--{/if}-->
+         <!--{if $document[version]>1}-->
+       	<a class="pull-right js-popbox" href="javascript:;" data-placement="bottom" data-auto-adapt="true" data-href="{MOD_URL}&op=menu&do=topic&operation=reversion&cid=$cid&fid=$fid"  title="{lang versions}">      	
+	       	<!--{if $version>0}-->
+          <b>#{$version}</b>
+          <span class="caret" style="margin-right: 5px;"></span>
+          <!--{else}-->
+          <i class="tool tool-ban"></i>
+          <!--{/if}--></a> 
+       	</a>
+        <!--{/if}-->            
+                   
+        <!--{if $lockinfo}--> <span class="text-danger pull-right" style="line-height:30px;display:inline-block;margin-right:10px;">$lockinfo[username] {lang editing}</span><!--{/if}-->
+                    
+         </div>
+    	<div class="document-container  clearfix" >
+        	
+            <div class="document-header clearfix">
+                <h1 class="document-subject">$class[fname]</h1>
+             </div>
+           
+            <div id="document_body" class="document-body clearfix">
+            <!--{if $code==1}--><textarea style="display:none">$str</textarea>
+            <!--{else}-->
+            $str
+            <!--{/if}-->
+            </div>
+            <div class="clearfix">
+           <!--{if $pn['prev']}-->
+             <a href="javascript:;" data-fid="$pn[prev]" class="navigation <!--{if $ismobile}-->narrow<!--{/if}--> navigation-prev <!--{if !$pn['next']}-->navigation-unique <!--{/if}-->" title="{lang previous_posts}" aria-label="{lang previous_posts}"><i class="fa fa-angle-left"></i></a>
+             <!--{/if}-->
+             <!--{if $pn['next']}-->
+             <a href="javascript:;" data-fid="$pn[next]" class="navigation <!--{if $ismobile}-->narrow<!--{/if}--> navigation-next <!--{if !$pn['prev']}-->navigation-unique <!--{/if}-->" title="{lang next_chapter}"  aria-label="{lang next_chapter}"><i class="fa fa-angle-right"></i></a>
+              <!--{/if}-->
+             </div>
+             <!--{if !$corpus['forbidcommit']}-->
+             <a name="comment_container"></a>
+            <div id="comment_container" class="document-comment clearfix">
+            		<script type="text/javascript"> ajaxget('{DZZSCRIPT}?mod=comment&op=ajax&do=getcomment&id=$class[fid]&idtype=corpus&allowattach=3&allowat=0&allowsmiley=1','comment_container','comment_container')</script>
+            </div>
+             <!--{/if}-->
+            <!--{if $_G[uid] && !$corpus['forbidcommit']}-->
+            <a name="comment_reply_form"></a>
+             <div id="comment_reply_form" class="comment-reply-form clearfix">
+             	 <div class="itemfeed" >
+                 	<div class="left_ifed"> <a href="user.php?uid=$_G[uid]" title="$_G[username]" hidefocus="true"><img width="50" height="50" src="avatar.php?uid=$_G[uid]" alt="$_G[username]"></a> </div>
+                     <div  class="cmt_fed right-ifed" id="corpus_reply"> 
+                     <script type="text/javascript">ajaxget('{DZZSCRIPT}?mod=comment&op=ajax&do=getPublishForm&module=corpus&id=$class[fid]&idtype=corpus&allowattach=3&allowat=0&allowsmiley=1','corpus_reply','corpus_reply')</script>
+                     </div>
+                 </div>
+             </div>
+              <!--{/if}-->
+        </div>
+<!--{if $code==1}-->
+<script src="dzz/corpus/scripts/editor.md/editormd.js"></script>
+<!--{else}-->
+<script src="dzz/system/ueditor/ueditor.parse.js?{VERHASH}"></script>
+<script src="dzz/system/ueditor/third-party/dzzattach/dzzattach.js?{VERHASH}" type="text/javascript"></script>
+<!--{/if}-->
+<script type="text/javascript" >
+
+jQuery(document).ready(function(e) {
+	jQuery('.js-popbox').each(function(){
+		jQuery(this).popbox();
+	});
+	jQuery('.navigation.navigation-prev').css('left',parseInt(jQuery('.bs-main-container').css('margin-left')));
+	if(jQuery('.bs-main-container').width()<900){
+		jQuery('.navigation').addClass('narrow');
+	}else{
+		jQuery('.navigation').removeClass('narrow');
+	}
+	<!--{if $ismobile}-->
+//		jQuery('#document_body').on('touchend',function(){
+//			leftDrager_op('hide');
+//		});
+	<!--{/if}-->
+  //jQuery('.document-body img').css({width:'auto',height:'auto','max-width':'100%'});
+  //兼容锚点
+  jQuery(document).on('click','#document_body a',function(){
+	  if(this.href.match(/#fid_\d+$/i)){
+		   jQuery(this).attr('target','_self');
+	   }else if(this.href.match(/#(.+?)$/i)){
+		  anchor=this.href.split('#');
+		  var tel=jQuery('a[name="'+anchor[1]+'"]');
+		 if(tel.length){
+			 var offset=tel.offset();
+			 jQuery('.bs-main-container').scrollTop(offset.top)
+		 }
+		 return false;
+	
+	  }else{
+		 jQuery(this).attr('target','_blank'); 
+		 return true;
+	  }
+	  
+  });
+ <!--{if $code==1}-->
+  var testEditormdView2 = editormd.markdownToHTML("document_body", {
+	  				
+                    htmlDecode      : "style,script,iframe",  // you can filter tags decode
+                    emoji           : true,
+                    taskList        : true,
+                    tex             : true,  // 默认不解析
+                    flowChart       : true,  // 默认不解析
+                    sequenceDiagram : true,  // 默认不解析
+                });
+  <!--{else}-->
+	jQuery('.document-body .dzz-attach-icon').css({'max-width':'1em','max-height':'1em'});
+	//jQuery('#document_body img').removeAttr('height');
+	 uParse('.document-body',{'rootPath':'dzz/system/ueditor'});
+     dzzattach.init('.document-body');
+  <!--{/if}-->
+});
+
+</script>
+    

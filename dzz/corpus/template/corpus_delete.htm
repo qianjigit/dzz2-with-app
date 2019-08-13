@@ -1,0 +1,170 @@
+<!--{template common/header_simple_start}-->
+<link href="static/css/common.css?{VERHASH}" rel="stylesheet" media="all">
+<link href="dzz/corpus/images/popbox.css?{VERHASH}" rel="stylesheet" media="all">
+<link href="dzz/corpus/images/corpus.css?{VERHASH}" rel="stylesheet" media="all">
+<link href="static/bootstrap/css/font-awesome.min.css?{VERHASH}" rel="stylesheet" media="all">
+<script type="text/javascript" src="static/js/jquery.leftDrager.js?{VERHASH}"></script>
+<script type="text/javascript" src="static/js/imgReady.js?{VERHASH}"></script>
+<script type="text/javascript" src="dzz/corpus/scripts/main.js?{VERHASH}"></script>
+<style>
+	.window-module-delete .window-module-title {
+		margin-top: 10px;
+		margin-bottom: 10px;
+		margin-right: 10px;
+	}
+	
+	.window-module-delete h3 {
+		height: 30px;
+		line-height: 30px;
+	}
+
+	
+	@media(max-width:450px) {
+		.window-module-delete .window-module-title-icon {
+			display: none;
+		}
+		.window-module-delete h3 {
+			display: none;
+		}
+		.window-module-delete .window-module-title {
+			margin-left: 10px;
+		}
+	}
+</style>
+<!--{template common/header_simple_end}-->
+<!--{template common/commer_header}-->
+<div class="bs-container clearfix">
+	<!-- 左边部分 -->
+	<div class="bs-left-container clearfix">
+		<!--{template corpus_my_left}-->
+	</div>
+
+	<!-- 左边拖动部分 -->
+	<div class="left-drager">
+		<div class="left-drager-op">
+			<div class="left-drager-sub"></div>
+		</div>
+	</div>
+	<div class="bs-main-container">
+		<div class="main-content clearfix">
+			<div id="delete_container" class="delete-container">
+				<!-- <div class="window-module window-module-delete">
+					<div class="window-module-title window-module-title-no-divider clearfix">
+						<span class="dzz dzz-delete" style="font-size:28px"></span>
+						<h3 class="pull-left">已删除的书</h3> -->
+						<!--{if $orgs}-->
+						<div class=" pull-right" style="margin-right:15px">
+							<select id="fileter_orgid" class="form-control" onchange="filter_by_orgid(this.value)" style="width:120px;">
+								<option value="0">{lang group_screening}</option>
+								<!--{loop $orgs $org}-->
+								<option value="$org[orgid]">$org[name]</option>
+								<!--{/if}-->
+							</select>
+						</div>
+						<!--{/if}-->
+					</div>
+
+					<ul id="board_list_delete" class="board-list list-unstyled u-gutter clearfix" style="padding-top:25px;">
+						<!--{if $list}-->
+						<!--{loop $list $value}-->
+						<li data-cid="$value[cid]">
+							<a class="js-open-board highlight-icon <!--{if $value[color]}-->color-white<!--{/if}-->" href="{DZZSCRIPT}?mod={MOD_NAME}&op=list&cid=$value[cid]" style="background-color: $value[color]; " target="_blank">
+								<img class="cover" src="<!--{if $value['aid']}-->{DZZSCRIPT}?mod=io&op=thumbnail&width=512&height=512&path={eval echo dzzencode('attach::'.$value['aid']);}<!--{else}-->dzz/images/b.gif<!--{/if}-->" onload="setImage(this,150,200);" />
+								<span class="fade"></span>
+								<!--{if $value[perm]>2}--><span class="icon-cog js-popbox" data-href="{DZZSCRIPT}?mod={MOD_NAME}&op=menu&do=topic&operation=delete&cid=$value[cid]" data-placement="right" data-auto-adapt="auto" title="{lang completely_delete}" data-cid="$value[cid]"><i class="fa fa-cog"></i></span>
+								<!--{/if}-->
+								<span class="details" title="$value[name]">$value[name]</span>
+
+							</a>
+						</li>
+						<!--{/loop}-->
+						<!--{if $next}-->
+						<li class="js-add-board">
+							<a class="board-list-item--add-board js-loadmore" data-href="$theurl&do=list&page={eval echo $page+1}" title="{lang load_more}" href="javascript:;">{lang load_more}</a>
+						</li>
+						<!--{/if}-->
+					</ul>
+					<!--{else}-->
+						<div style="text-align: center;position: absolute;top: 30%;left: 50%;">
+							<img src="{MOD_PATH}/images/no_list.png" /><br/>
+							<span style="font-size: 18px;color: #AAA;">{lang there_is_no_relevant_content}</span>
+						</div>
+					<!--{/if}-->
+					
+
+				<!-- </div> -->
+			<!-- </div> -->
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+jQuery('.left-drager').leftDrager_layout();
+
+
+
+	jQuery(window).scroll(function(e) {
+		var clientHeight = document.documentElement.clientHeight;
+		var scrollHeight = document.documentElement.scrollHeight;
+		if(jQuery(window).scrollTop() + clientHeight > scrollHeight - 20) jQuery('.js-loadmore').trigger('click');
+	});
+	jQuery(document).on('click', '.js-loadmore', function() {
+		var el = jQuery(this);
+		jQuery.get(el.data('href'), function(html) {
+			el.parent().replaceWith(html);
+		});
+		return false;
+	});
+	jQuery(document).ready(function(e) {
+		jQuery('.js-popbox').each(function() {
+			jQuery(this).popbox();
+		});
+
+	});
+	var search_timer = null;
+	jQuery('.js-search-input').on('keyup', function(e) {
+		if(search_timer) window.clearTimeout(search_timer);
+		search_timer = window.setTimeout(function() {
+			document.getElementById('delete_search_form').onsubmit();
+		}, 1000);
+	});
+	jQuery('.js-search-addon').on('click', function() {
+		if(jQuery(this).find('i').hasClass('fa-remove')) {
+			jQuery('#delete_search_form .js-search-input').val('');
+			document.getElementById('delete_search_form').onsubmit();
+		} else {
+			document.getElementById('delete_search_form').onsubmit();
+		}
+		return false;
+	});
+
+	function filter_by_orgid(orgid) {
+		jQuery('#delete_search_orgid').val(orgid);
+		jQuery('#board_list_delete').load('{DZZSCRIPT}?mod={MOD_NAME}&op=delete&do=list&orgid=' + orgid);
+	}
+
+	function search_validate(form) {
+		jQuery('#board_list_delete').load(form.action + '?' + jQuery(form).serialize(), function() {
+			if(jQuery('#delete_search_form .js-search-input').val() != '') {
+				jQuery('.js-search-addon i').addClass('fa-remove').removeClass('fa-serach');
+			} else {
+				jQuery('.js-search-addon i').addClass('fa-search').removeClass('fa-remove');
+			}
+		});
+		return false;
+	}
+
+
+
+</script>
+
+<script type="text/javascript" src="dzz/corpus/scripts/jquery.popbox.js?{VERHASH}"></script>
+<!-- The jQuery UI widget factory, can be omitted if jQuery UI is already included -->
+<script type="text/javascript" src="static/jquery_file_upload/jquery.ui.widget.js?{VERHASH}"></script>
+<script type="text/javascript" src="static/jquery_file_upload/jquery.iframe-transport.js?{VERHASH}"></script>
+<!-- The basic File Upload plugin -->
+<script type="text/javascript" src="static/jquery_file_upload/jquery.fileupload.js?{VERHASH}"></script>
+<script type="text/javascript" src="static/jquery_file_upload/jquery.fileupload-process.js?{VERHASH}"></script>
+<script type="text/javascript" src="static/jquery_file_upload/jquery.fileupload-validate.js?{VERHASH}"></script>
+<script src="static/bootstrap/js/bootstrap.min.js?{VERHASH}"></script>
+<!--codestrings-->
+<!--{template common/footer_simple}-->

@@ -1,0 +1,175 @@
+<!--{template common/header_simple_start}-->
+<link href="static/css/common.css?{VERHASH}" rel="stylesheet" media="all">
+<link href="dzz/corpus/images/popbox.css?{VERHASH}" rel="stylesheet" media="all">
+<link href="dzz/corpus/images/corpus.css?{VERHASH}" rel="stylesheet" media="all">
+<script type="text/javascript" src="dzz/corpus/scripts/main.js?{VERHASH}"></script>
+<style>
+.window-module-archive .window-module-title{
+	margin-top:10px;
+	margin-bottom:10px;
+	margin-right:10px;
+
+}
+.window-module-archive h3{
+	height:30px;
+	line-height:30px;
+}
+.icon-lg{
+  line-height:30px;
+}
+
+</style>
+<!--{template common/header_simple_end}-->
+<nav class="navbar navbar-dzz bs-navbar-default" role="navigation" style="margin:0">
+      <!--{template common/top}--> 
+</nav>
+<style>
+.form-horizontal .form-group {
+    margin-left: 0px;
+}
+label.checked{
+	color:#d43f3a;
+}
+.image-item{
+	position:relative;
+	margin-bottom:10px;
+}
+
+.complain-wrap li {
+    line-height: 24px;
+    color: #666;
+	font-size:12px
+}
+</style>
+ <div class="main-content container clearfix">
+   	<div id="archive_container" class="archive-container" >
+    	 <div class="window-module window-module-archive">
+            <div class="window-module-title window-module-title-no-divider clearfix">
+            	<span class="icon-lg window-module-title-icon fa fa-shield"></span>
+            	<h3>{lang report}</h3>
+            </div>
+            <div class="u-gutter clearfix" style="padding-top:10px;">
+            <form id="report_{$corpus['cid']}" class="form-horizontal" action="{DZZSCRIPT}?mod={MOD_NAME}&op=report" method="post" onsubmit="return validate(this)">
+                	<input type="hidden" name="reportsubmit" value="true" />
+                	<input type="hidden" name="formhash" value="{FORMHASH}" /> 
+                    <input type="hidden" name="cid" value="$corpus[cid]" /> 
+                     <div class="form-group">
+                    	 <h4>《<a href="{DZZSCRIPT}?mod={MOD_NAME}&op=list&cid=$corpus['cid']" target="_blank">$corpus[name]</a>》{lang alleged_infringement</h4>
+                     </div>
+                     <div class="form-group" >
+                	<!--{loop $modreasons $key $value}-->
+                    	<div class="clearfix ">
+                    	<label class="checkbox-inline" style="margin-left:15px;margin-bottom:10px;"> <input  type="checkbox" class="js-report-item js-report-{$key}"  name="modreasons[]" value="$key" <!--{if in_array($key,$corpus[modreasons])}-->checked="checked"<!--{/if}--> /> $value</label>
+                        <!--{if $key<1}-->
+                        <div id="report_0_content" class="clearfix" style="display:none">
+                   		<div class="panel panel-default ml20">
+                             <div class="panel-heading">{lang provide_the_right_to_document_invasion_of_privacy}</div>
+                             <div class="panel-body">
+                             <p style="font-weight:bold">1、{lang fill_in_the_relevant_information_provide_complete_materials}:</p> 
+                             <ul class="complain-wrap list-unstyled" style="padding-left:15px;"> 
+                                <li>(1) {lang obligee_provide_copies}</li> 
+                                <li>(2) {lang please_show} <a href="$_G[siteurl]/dzz/corpus/images/assurance.docx" title="{lang click_to_download_the_guarantee_letter}">{lang letter_of_guarantee}</a>{lang copies_content_is_as_follows}</li> 
+                                <li class="report_print_wrap"> 
+                                    <a class="ml10" href="$_G[siteurl]/dzz/corpus/images/assurance.docx" title="{lang click_to_download_the_guarantee_letter}"><img src="dzz/corpus/images/assurance.png" class="report_print" title="{lang click_to_download_the_guarantee_letter}" style="max-width:100%;border:1px solid #e1e1e1;background:#F9F9F9;margin:10px 0"></a>
+                                </li>  
+                                <li>(3) {lang if_procuration_by_the_lawyer}</li> 
+                             </ul> 
+                            <p style="font-weight:bold">2、{lang upload_scanned_copy}</p> 
+                            <div id="upload" class="addPhotoBar" style="position:relative;padding:10px;overflow:hidden;margin-bottom:10px;">
+                                <input id="fileupload" name="files[]" tabIndex="-1" style="position: absolute;outline:none; filter: alpha(opacity=0); PADDING-BOTTOM: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; font-family: Arial; font-size: 180px;height:40px;width:100%;display:inline-block;top: 0px; cursor: pointer; right: 0px; padding-top: 0px; opacity: 0;direction:ltr;background-image:none" type="file" accept="image/png,image/gif,image/jpeg,image/bmp" multiple>
+                               <button class="btn btn-default">{lang upload_to_report_the_material}</button><span class="help-inline ml10">{lang only_JPG_jpeg_BMP_PNG_format_are_supported}</span>
+                            </div>
+                            
+                            <div id="preview"></div>
+                        </div>
+                    </div>
+              			</div>
+                        <!--{/if}-->
+                        </div>
+                    <!--{/loop}-->
+                    </div>
+                     <div class="form-group">
+                     	<p>{lang detailed_description}:</p>
+                        <p><textarea name="detail" class="form-control" style="background:#FFF" rows="3" placeholder="{lang fill_in_your_details}"></textarea></p>
+                        
+                     </div>
+                    
+                    <div class="form-group">
+                     	<button class="btn btn-primary btn-width" type="submit">{lang immediately_report}</button>
+                        &nbsp;&nbsp;<button class="btn btn-default btn-width" type="button" onclick="window.close()">{lang cancel}</button>
+                     </div>
+             </form>
+           </div>
+        </div>
+    </div>
+ </div>
+<script type="text/javascript">
+
+jQuery(document).on('click','.js-report-item',function(){
+	var el=jQuery(this);
+	
+	if(el.prop('checked')){
+		if(el.hasClass('js-report-0')){
+			jQuery('#report_0_content').show();
+		}
+		el.parent().addClass('checked');
+	}else{
+		if(el.hasClass('js-report-0')){
+			jQuery('#report_0_content').hide();
+		}
+		el.parent().removeClass('checked');
+	}
+});
+jQuery(document).ready(function(e) {
+   	
+	 jQuery('#fileupload').fileupload({
+			url: '{DZZSCRIPT}?mod={MOD_NAME}&op=ajax&do=imageupload',
+			dataType: 'json',
+			autoUpload: true,
+			maxFileSize: null, // 2MB
+			maxChunkSize:2000000, //2M
+			acceptFileTypes:new RegExp("(\.|\/)([jpeg|jpg|gif|png|bmp])$",'i'),
+			dropZone:jQuery('#upload'),
+			pasteZone:jQuery('#upload'),
+			sequentialUploads:true,
+				
+		   }).on('fileuploaddone', function (e, data) {
+				jQuery.each(data.result.files, function (index, file) {
+					console.log(file);
+					jQuery('<div class="image-item"><input type="hidden" name="aid[]" value="'+file.data.aid+'"> <img class="thumbnail" style="margin-bottom:0;max-width:100%;max-height:200px;" src="'+file.data.img+'" /><a href="javascript:;" style="position:absolute;left:0;top:0;" class="ibtn glyphicon glyphicon-remove" title="{lang remove_image}" onclick="remove_image(this)"></a></div>').appendTo('#preview');
+				});
+			});
+});
+function remove_image(obj){
+	jQuery(obj).parent().remove();
+	return false;
+}
+function validate(form){
+	console.log(form);
+	console.log(form.modreasons);
+	if(jQuery('.js-report-item:checked').length<1){
+		showmessage(__lang.choose_infringement,'danger',3000,1);
+		return false;
+	}
+	if(jQuery('.js-report-0').prop('checked')){
+		if(jQuery('input[name="aid[]"').length<1){
+			showmessage(__lang.guarantee_letter_submit,'danger',3000,1);
+			return false;
+		}
+	}
+	return true;
+}
+ 
+</script>
+<script  type="text/javascript" src="dzz/corpus/scripts/jquery.popbox.js?{VERHASH}"></script>
+
+<!-- The jQuery UI widget factory, can be omitted if jQuery UI is already included -->
+<script type="text/javascript" src="static/jquery_file_upload/jquery.ui.widget.js?{VERHASH}"></script>
+<script type="text/javascript" src="static/jquery_file_upload/jquery.iframe-transport.js?{VERHASH}"></script>
+<!-- The basic File Upload plugin -->
+<script type="text/javascript" src="static/jquery_file_upload/jquery.fileupload.js?{VERHASH}"></script>
+<script type="text/javascript" src="static/jquery_file_upload/jquery.fileupload-process.js?{VERHASH}"></script>
+<script type="text/javascript" src="static/jquery_file_upload/jquery.fileupload-validate.js?{VERHASH}"></script>
+<script src="static/bootstrap/js/bootstrap.min.js?{VERHASH}"></script>
+<!--codestrings-->
+<!--{template common/footer_simple}--> 

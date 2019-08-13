@@ -1,0 +1,114 @@
+<!--{template common/mobile_simple_start}-->
+<link rel="stylesheet" type="text/css" href="static/css/mabile_common.css?{VERHASH}" />
+<link href="{MOD_PATH}/images/mobile/css/my_view.css?{VERHASH}" rel="stylesheet" media="all" />
+<style type="text/css">
+	html,
+	body {
+		overflow: hidden;
+	}
+</style>
+<!--{template common/mobile_simple_process}-->
+<div class="header-content">
+	<div class="tree">
+		<ul>
+			<li class="tree-content">	
+				<!--{if $corpus[deletetime]}-->
+				<span><i class="dzz dzz-info icon-book"></i>$corpus[name]</span>
+				<!--{else}-->
+				<span style="padding-left: 0;">$corpus[name]</span>
+				<!--{/if}--> 
+			</li>
+		</ul>
+	</div>
+	<div class="back-top" style="display: none;">
+		<i class="dzz dzz-top"></i>
+	</div>
+</div>
+<!--{if $corpus[perm]>2}-->
+<div class="footer-simple">
+	<div class="weui-tabbar footer-simple-find">
+		<a href="javascript:;" class="weui-tabbar__item ctree-bottom-operate <!--{if in_array($cid,$paixu_stared)}-->active<!--{/if}-->" data-set="1">
+			<div class="weui-tabbar__icon">
+				<i class="dzz dzz-grade"></i>
+			</div>
+			<p class="weui-tabbar__label">{lang star_sign}</p>
+		</a>
+		<a href="javascript:;" class="weui-tabbar__item ctree-bottom-operate" data-set="2">
+			<div class="weui-tabbar__icon">
+				<i class="dzz dzz-settings"></i>
+			</div>
+			<p class="weui-tabbar__label">{lang cover_setting}</p>
+		</a>
+		<!--{if $corpus[deletetime]}--> 
+		<a href="javascript:;" class="weui-tabbar__item ctree-bottom-operate" data-set="6">
+			<div class="weui-tabbar__icon">
+				<i class="dzz dzz-delete"></i>
+			</div>
+			<p class="weui-tabbar__label">{lang recovery}</p>
+		</a>
+		<a href="javascript:;" class="weui-tabbar__item ctree-bottom-operate" data-set="7">
+			<div class="weui-tabbar__icon">
+				<i class="dzz dzz-delete"></i>
+			</div>
+			<p class="weui-tabbar__label">{lang completely_delete}</p>
+		</a>
+		<!--{else}-->
+		<a href="javascript:;" class="weui-tabbar__item ctree-bottom-operate" data-set="3">
+			<div class="weui-tabbar__icon">
+				<i class="dzz dzz-archive3"></i>
+			</div>
+			<p class="weui-tabbar__label">{lang archive}</p>
+		</a>
+		<a href="javascript:;" class="weui-tabbar__item ctree-bottom-operate" data-set="4">
+			<div class="weui-tabbar__icon">
+				<i class="dzz dzz-delete"></i>
+			</div>
+			<p class="weui-tabbar__label">{lang delete}</p>
+		</a>
+		<!--{/if}--> 
+		<a href="javascript:;" class="weui-tabbar__item ctree-bottom-operate" data-set="5">
+			<div class="weui-tabbar__icon">
+				<i class="dzz dzz-more"></i>
+			</div>
+			<p class="weui-tabbar__label">{lang more}</p>
+			<div class="weui-dropup hide">
+				<li>
+					<p class="ctree-bottom-operate" data-set="8"><i class="dzz dzz-group"></i>&nbsp;&nbsp;{lang member}</p>
+				</li>
+				<li>
+					<p class="ctree-bottom-operate" data-set="9"><i class="dzz dzz-share"></i>&nbsp;&nbsp;{lang share}</p>
+				</li>
+			</div>
+		</a>
+		
+	</div>
+</div>
+<div id="showactionSheet" class="weui-popup__container popup-bottom">
+	<div class="weui-popup__overlay">
+		<a href="javascript:;" class="close-popup" style="display: block;height: 100%;"></a>
+	</div>
+	<div class="weui-popup__modal">
+		<div class="modal-content" style="padding-top: 0;">
+
+		</div>
+		<div class="toolbar createbar" style="position: static;margin-top: 20px;background: #FFFFFF;">
+			<div class="toolbar-inner">
+				<a href="javascript:;" class="btn-a close-popup">{lang cancel}</a>
+			</div>
+		</div>
+	</div>
+</div>
+<!--{/if}-->
+<script type="text/javascript">
+	var Cid = '{$cid}';
+	var Fid = '{$fid}';
+	var Perm = '{$corpus[perm]}';
+	jQuery(document).ready(function() {
+		my_view.ctree();
+	})
+</script>
+<script src="{MOD_PATH}/scripts/mobile_my_view.js?{VERHASH}" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" src="static/clipboard/clipboard.min.js"></script>
+</body>
+
+</html>

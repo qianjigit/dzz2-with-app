@@ -1,0 +1,178 @@
+<!--{template common/header_simple_start}-->
+<!--{if $corpus['css']}-->
+<link type="text/css" href="$corpus['css']?{VERHASH}" rel="stylesheet">
+<!--{/if}-->
+<link href="static/css/common.css?{VERHASH}" rel="stylesheet" media="all">
+<link href="static/css/smilies.css?{VERHASH}" rel="stylesheet" media="all">
+<link href="{MOD_PATH}/images/themes/default/style.min.css?{VERHASH}" rel="stylesheet" media="all">
+<link href="static/js/datepicker/datepicker.css?{VERHASH}" rel="stylesheet" media="all">
+<link href="static/bootstrap/css/font-awesome.min.css?{VERHASH}" rel="stylesheet" media="all">
+<link href="dzz/comment/images/comment.css?{VERHASH}" rel="stylesheet" media="all">
+<link href="dzz/corpus/images/corpus.css?{VERHASH}" rel="stylesheet" media="all">
+<link href="dzz/corpus/images/document.css?{VERHASH}" rel="stylesheet" media="all">
+<link rel="stylesheet" type="text/css" href="static/css/checkbox.css?{VERHASH}"/>
+<script type="text/javascript" src="static/js/imgReady.js?{VERHASH}"></script>
+<script type="text/javascript" src="dzz/corpus/scripts/main.js?{VERHASH}"></script>
+<script type="text/javascript" src="static/js/jquery.leftDrager.js?{VERHASH}"></script>
+<script type="text/javascript" > 
+var needsave=0; 
+var editing_fid=0;
+</script>
+<style>
+html,body{
+	height:100%;
+	overflow:hidden;
+}
+
+.popbox{
+	min-width:50px;
+}
+.left-drager .left-drager-op {
+	position: absolute;
+    height: 30px;
+    width: 30px;
+    left: -39px;
+    top: 4px;
+	display:block;
+    
+}
+.left-drager .left-drager-op2 {
+    left: 0px;
+    top: 4px; 
+    padding: 0;
+}
+.bs-left-container{
+	width:300px;
+}
+.bs-main-content{
+	margin-left:300px;
+}
+.document-container .cover-body{
+	margin: 20px auto;
+}	
+.document-operation .tool-cover{
+	margin-top: 10px;
+}
+<!--{if $ismobile || $_G['cookie']['book_list_isshow']=='hide'}-->
+	.bs-left-container{
+		display:none;
+	}
+	.bs-main-content{
+		margin-left:0;
+	}
+	.left-drager{
+		left:0;
+	}
+	.navigation.navigation-prev {
+		left:0;
+	}
+<!--{elseif  ($lwidth=$_G['cookie']['book_list_width'])>0}-->
+	.bs-left-container{
+		width:{$lwidth}px;
+	}
+	.bs-main-content{
+		margin-left:{$lwidth}px;
+	}
+	.left-drager{
+		left:{$lwidth}px;
+	}
+	.navigation.navigation-prev {
+		left:{$lwidth}px;
+	}
+
+<!--{/if}-->
+</style>
+<!--{template common/header_simple_end}-->
+
+<div class="wrapper bs-container">
+  <div class="bs-left-container  clearfix" style="position:absolute">
+    	<!--{template list/ctree}-->
+  </div>
+  <div class="left-drager">
+     <div class="left-drager-op"><a class="drager-op " href="javascript:;"><i class="fa fa-bars"></i></a></div>
+  </div>
+  <div class="bs-main-container">
+    <div class="main-content clearfix" >
+   		<div id="topic_container" class="topic-container" > </div>
+    </div>
+    <div id="loading_info" style="position: fixed; left: 0px; top: 0px; width: 100%; height: 100%;margin:0;padding:0;overflow:hidden; z-index: 11000;background:transparent;display:none;">
+       <table   height="100%" width="100%"><tbody><tr><td align="center" valign="middle"><div class="loading_img"><div class="loading_process"></div></div></td></tr></tbody></table>
+    </div>
+  </div>
+</div>
+<script type="text/javascript" >
+  jQuery('.left-drager').leftDrager_layout(function(){
+	  jQuery('.left-wrapper').height(document.documentElement.clientHeight-jQuery('.classtree-topbar').outerHeight(true));
+  },{'cookieid':'book_list','ismobile':'$ismobile'}); 
+
+var timer=null;
+jQuery(window).on('resize',function(){
+	if(timer) window.clearTimeout(timer);
+	timer=window.setTimeout(function(){
+		if(jQuery('.bs-main-container').width()<900){
+			jQuery('.navigation').addClass('narrow');
+		}else{
+			jQuery('.navigation').removeClass('narrow');
+		}
+		if(jQuery('#cover_body').length){
+			 jQuery('#cover_body').css('height',jQuery('#cover_body').width()*(4/3));
+			 setImage(jQuery('#cover_body .cover').get(0),'100%','100%',1);
+		}
+	},200);
+});
+jQuery(document).ready(function(e) {
+	
+  //更新浏览数
+//  jQuery.get('{MOD_URL}&op=ajax&do=updateview&cid=$cid');
+	
+	<!--{if $corpus[perm]>2 && $corpus['modreasons']}-->
+	var msg='<h4 class="danger">'+__lang.your_corpus_violate_agreement+'</h4><h4>'+__lang.banned_reason+'：</h4>{$modtitle}';
+	showDialog(msg, 'alert', __lang.important_reminder);
+	<!--{/if}-->
+	jQuery('.js-popbox').each(function(){
+		jQuery(this).popbox();
+	});
+});
+
+
+
+
+
+
+</script>
+<script type="text/javascript" src="static/js/input_field.js?{VERHASH}"></script>
+<script src="static/js/jquery.textareaexplander.js?{VERHASH}"></script>
+<script type="text/javascript" src="static/js/jquery.highlight.js?{VERHASH}"></script>
+<script type="text/javascript" src="static/js/jstree.min.js?{VERHASH}"></script>
+<!--{if $corpus[perm]>1}-->
+<!-- The jQuery UI widget factory, can be omitted if jQuery UI is already included -->
+<script type="text/javascript" src="static/jquery_file_upload/jquery.ui.widget.js?{VERHASH}"></script>
+<script type="text/javascript" src="static/jquery_file_upload/jquery.iframe-transport.js?{VERHASH}"></script>
+<!-- The basic File Upload plugin -->
+<script type="text/javascript" src="static/jquery_file_upload/jquery.fileupload.js?{VERHASH}"></script>
+<script type="text/javascript" src="static/jquery_file_upload/jquery.fileupload-process.js?{VERHASH}"></script>
+<script type="text/javascript" src="static/jquery_file_upload/jquery.fileupload-validate.js?{VERHASH}"></script>
+<!--{/if}-->
+<script type="text/javascript"  src="static/js/smilies.js?{VERHASH}"></script>
+
+<script src="static/bootstrap/js/bootstrap.min.js?{VERHASH}"></script>
+<!--{if !$corpus['forbidcommit']}-->
+<script src="dzz/comment/scripts/comment.js?{VERHASH}" type="text/javascript"></script>
+<!--{/if}-->
+
+    <script src="dzz/corpus/scripts/editor.md/lib/marked.min.js?{VERHASH}"></script>
+    <script src="dzz/corpus/scripts/editor.md/lib/prettify.min.js"></script>
+    <script src="dzz/corpus/scripts/editor.md/lib/raphael.min.js"></script>
+    <script src="dzz/corpus/scripts/editor.md/lib/underscore.min.js"></script>
+    <script src="dzz/corpus/scripts/editor.md/lib/sequence-diagram.min.js"></script>
+ 	<script src="dzz/corpus/scripts/editor.md/lib/flowchart.min.js"></script>
+<script src="dzz/corpus/scripts/editor.md/lib/jquery.flowchart.min.js"></script>
+	
+
+<script src="dzz/system/ueditor/ueditor.parse.js?{VERHASH}"></script>
+<script src="dzz/system/ueditor/third-party/dzzattach/dzzattach.js?{VERHASH}" type="text/javascript"></script>
+<script type="text/javascript" src="static/js/jquery.ui.core.js?{VERHASH}"></script> 
+<script type="text/javascript" src="static/js/datepicker/jquery.ui.datepicker.js?{VERHASH}"></script> 
+<script type="text/javascript" src="static/js/datepicker/jquery.datepicker-zh-CN.js?{VERHASH}"></script> 
+<!--codestrings-->
+<!--{template common/footer_simple}-->

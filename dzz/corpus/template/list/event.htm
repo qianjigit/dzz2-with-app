@@ -1,0 +1,36 @@
+<link href="dzz/corpus/images/event.css?{VERHASH}" rel="stylesheet" media="all">
+	<select id="select-member" class="form-control pull-right" style="width:100px;padding:2px 12px;margin-right:20px;margin-top:-40px;" onchange="redirect(this)">
+      <option value="0">{lang press_staff}</option>
+      <!--{loop $users $user}-->
+      <option <!--{if $user[uid]==$uid}--> selected="selected" <!--{/if}--> value="$user[uid]">$user[username]</option>
+      <!--{/loop}-->
+    </select>
+  <div class="workspace">
+    <div class="page" id="page-progress" >
+      <div class="page-inner">
+        <h2></h2>
+        <!--{template list/event_item}-->
+      </div>
+    </div>
+  </div>
+
+<script type="text/javascript">
+jQuery('.bs-main-container').scroll(function(e) {
+	var clientHeight = document.documentElement.clientHeight;
+	var scrollHeight =jQuery('.main-content').height();
+    if(jQuery('.bs-main-container').scrollTop()+clientHeight>scrollHeight-20) jQuery('#btn-load-more').trigger('click');
+});
+function redirect(obj){
+	jQuery('#topic_container').load(DZZSCRIPT+'?mod=corpus&op=list&do=event&cid={$cid}&uid='+obj.value);
+}
+
+function getEventMore(date,uid){
+	jQuery('#btn-load-more').html(__lang.loading).get(0).onclick=null;
+	jQuery.get(DZZSCRIPT+'?mod=corpus&op=list&do=event&operation=getEventByDate&cid={$cid}',{'date':date,'uid':uid},function(html){
+		jQuery('#btn-load-more').replaceWith(html);
+	});
+}
+
+</script> 
+
+

@@ -1,0 +1,253 @@
+<!--{template common/mobile_simple_start}-->
+<link href="{MOD_PATH}/images/mobile/css/my.css?{VERHASH}" rel="stylesheet" media="all" />
+<!--{template common/mobile_simple_process}-->
+<div class="container" id="container"></div>
+<script type="text/javascript" class="home js_show">
+	jQuery(document).ready(function(){
+		my.creat_group();
+	})
+</script>
+
+<script type="text/html" id="tpl_home">
+	<div class="page">
+		<div class="container-fluid">
+			<form class="form " id="addorg_form" role="form" method="post" action="{MOD_URL}&op=menu&do=addorg" onsubmit="my.addorg_submit(this);return false;">
+				<p id="return_addorg" class="text-danger" style="text-align: center;margin: 0;"></p>
+				<input type="hidden" name="handlekey" value="addorg" />
+				<input type="hidden" name="addorgsubmit" value="true" />
+				<input type="hidden" name="formhash" value="{FORMHASH}" />
+				<div class="weui-cells weui-cells_form" style="margin-top: 0;">
+					<div class="weui-cell" style="border-bottom: 1px solid #F2F4F6;">
+						<div class="weui-cell__bd" style="font-size: 17px;">
+							<input class="weui-input color_input" type="text" placeholder="{lang group_name}" name="name">
+						</div>
+					</div>
+					<div class="weui-cell">
+						<div class="weui-cell__bd">
+							<textarea class="weui-textarea" name="desc" placeholder="{lang group_introduction_or_announcement}" rows="5"></textarea>
+						</div>
+					</div>
+				</div>
+				<div class="weui-cells" style="margin-top: 15px;">
+					<div class="weui-cell weui-cell_access js_item" data-id="jurisdiction1">
+						<div class="weui-cell__bd">
+							<label for="" class="weui-label">{lang panel_type}</label>
+						</div>
+						<div class="weui-cell__ft panel-type">
+							<input type="hidden" name="privacy" value="1" />
+							<span>{lang privately_owned}</span>
+						</div>
+					</div>
+					<div class="weui-cell weui-cell_access js_item" data-id="jurisdiction2">
+						<div class="weui-cell__bd">
+							<label for="" class="weui-label">{lang members_allowed_to_create}</label>
+						</div>
+						<div class="weui-cell__ft user-cleat">
+							<input type="hidden" name="mperm_c" value="7" />
+							<span>{lang public_corpus}&nbsp;{lang private_collection}&nbsp;{lang group_of_public_works}</span>
+
+						</div>
+					</div>
+					<div class="weui-cell weui-cell_access js_item" data-id="jurisdiction3">
+						<div class="weui-cell__bd">
+							<label for="" class="weui-label">{lang fraternity}</label>
+						</div>
+						<div class="weui-cell__ft user">
+							<input type="hidden" name="inviteperm" value="0" />
+							<span>{lang anyone}</span>
+						</div>
+					</div>
+					<div class="weui-cell weui-cell_access js_item" data-id="jurisdiction4">
+						<div class="weui-cell__bd">
+							<label for="" class="weui-label">{lang members_of_the_corpus_remove}</label>
+						</div>
+						<div class="weui-cell__ft user-del">
+							<input type="hidden" name="removeperm" value="0" />
+							<span>{lang no_remove}</span>
+						</div>
+					</div>
+				</div>
+				<div style="padding: 15px 10px;">
+					<button id="newcorpussubmit_btn" type="submit" class="weui-btn weui-btn_primary">{lang create}</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</script>
+<script type="text/html" id="tpl_jurisdiction1">
+	<div class="page">
+		<div class="weui-flex appTeam_top1">
+			<div class="weui-flex__item">
+				<a class="placeholder returnDiv1" href="javascript:home();"><img src="dzz/corpus/images/icon-cancel@3x.png" alt="" /></a>
+			</div>
+			<div class="weui-flex__item returnSpan">
+				<div class="placeholder" style="font-size: 18px;text-align: center;">{lang panel_type}</div>
+			</div>
+			<div class="weui-flex__item">
+				<div class="placeholder"></div>
+			</div>
+		</div>
+
+		<div class="weui-cells  weui-cells_checkbox" style="margin-top: 0;">
+			<label class="weui-cell weui-check__label" for="x11" style="margin: 0;">
+	            <div class="weui-cell__bd">
+	                <p>{lang privately_owned}</p>
+	                <span class="choice_span">{lang group_member_look_at_this_group}</span>
+	            </div>
+	            <div class="weui-cell__ft" style="width: 40px;">
+	                <input type="radio" class="weui-check" name="radio1" id="x11" checked="" value="1">
+	                <span class="weui-icon-checked"></span>
+	            </div>
+	        </label>
+			<label class="weui-cell weui-check__label" for="x12" style="margin: 0;">
+	            <div class="weui-cell__bd">
+	                <p>{lang open}</p>
+	                <span class="choice_span">{lang group_member_create_a_new_corpus_within_the_group}</span>
+	            </div>
+	            <div class="weui-cell__ft" style="width: 40px;">
+	                <input type="radio" class="weui-check" name="radio1" id="x12" value="2">
+	                <span class="weui-icon-checked"></span>
+	            </div>
+	        </label>
+		</div>
+		<div style="padding: 15px 10px;">
+			<div id="newcorpussubmit_btn" class="choose1 weui-btn weui-btn_primary">{lang submit}</div>
+		</div>
+	</div>
+</script>
+<script type="text/html" id="tpl_jurisdiction2">
+	<div class="page">
+		<div class="weui-flex appTeam_top1">
+			<div class="weui-flex__item">
+				<a class="placeholder returnDiv1" href="javascript:home();"><img src="dzz/corpus/images/icon-cancel@3x.png" alt="" /></a>
+			</div>
+			<div class="weui-flex__item returnSpan">
+				<div class="placeholder" style="font-size: 18px;text-align: center;">{lang members_allowed_to_create}</div>
+			</div>
+			<div class="weui-flex__item">
+				<div class="placeholder"></div>
+			</div>
+		</div>
+		<div class="weui-cells weui-cells_checkbox" style="margin-top: 0;">
+			<label class="weui-cell weui-check__label" for="s11">
+	            <div class="weui-cell__bd">
+	                <p>{lang private_collection}</p>
+	                <span class="choice_span">{lang group_member_look_at_this_group}</span>
+	            </div>
+	            <div class="weui-cell__hd">
+	                <input type="checkbox" class="weui-check" name="mperm_c" id="s11" value="1">
+	                <i class="weui-icon-checked"></i>
+	            </div>
+	        </label>
+			<label class="weui-cell weui-check__label" for="s12">
+	            <div class="weui-cell__bd">
+	                <p>{lang public_corpus}</p>
+	                <span class="choice_span">{lang group_member_create_a_new_corpus_within_the_group}</span>
+	            </div>
+	            <div class="weui-cell__hd">
+	                <input type="checkbox" name="mperm_c" class="weui-check" id="s12" value="4">
+	                <i class="weui-icon-checked"></i>
+	            </div>
+	        </label>
+			<label class="weui-cell weui-check__label" for="s13">
+	            <div class="weui-cell__bd">
+	                <p>{lang group_of_public_works}</p>
+	                <span class="choice_span">{lang group_member_look_at_this_group}</span>
+	            </div>
+	            <div class="weui-cell__hd">
+	                <input type="checkbox" name="mperm_c" class="weui-check" id="s13" value="2">
+	                <i class="weui-icon-checked"></i>
+	            </div>
+	        </label>
+			<div style="padding: 15px 10px;">
+				<div id="newcorpussubmit_btn" class="choose2 weui-btn weui-btn_primary">{lang submit}</div>
+			</div>
+		</div>
+	</div>
+</script>
+<script type="text/html" id="tpl_jurisdiction3">
+	<div class="page">
+		<div class="weui-flex appTeam_top1">
+			<div class="weui-flex__item">
+				<a class="placeholder returnDiv1" href="javascript:home();"><img src="dzz/corpus/images/icon-cancel@3x.png" alt="" /></a>
+			</div>
+			<div class="weui-flex__item returnSpan">
+				<div class="placeholder" style="font-size: 18px;text-align: center;">{lang fraternity}</div>
+			</div>
+			<div class="weui-flex__item">
+				<div class="placeholder"></div>
+			</div>
+		</div>
+		<div class="weui-cells  weui-cells_checkbox" style="margin-top: 0;">
+			<label class="weui-cell weui-check__label" for="x11" style="margin: 0;">
+	            <div class="weui-cell__bd">
+	                <p>{lang anyone}</p>
+	                <span class="choice_span">{lang anyone_can_be_invited}</span>
+	            </div>
+	            <div class="weui-cell__ft" style="width: 40px;">
+	                <input type="radio" class="weui-check" name="user1" id="x11" value="0" checked="">
+	                <span class="weui-icon-checked"></span>
+	            </div>
+	        </label>
+			<label class="weui-cell weui-check__label" for="x12" style="margin: 0;">
+	            <div class="weui-cell__bd">
+	                <p>{lang in_group}</p>
+	                <span class="choice_span">{lang only_members_of_this_group_can_be_invited_to_join}</span>
+	            </div>
+	            <div class="weui-cell__ft" style="width: 40px;">
+	                <input type="radio" class="weui-check" name="user1" id="x12" value="1">
+	                <span class="weui-icon-checked"></span>
+	            </div>
+	        </label>
+		</div>
+		<div style="padding: 15px 10px;">
+			<div id="newcorpussubmit_btn" class="choose3 weui-btn weui-btn_primary">{lang submit}</div>
+		</div>
+	</div>
+</script>
+<script type="text/html" id="tpl_jurisdiction4">
+	<div class="page">
+		<div class="weui-flex appTeam_top1">
+			<div class="weui-flex__item">
+				<a class="placeholder returnDiv1" href="javascript:home();"><img src="dzz/corpus/images/icon-cancel@3x.png" alt="" /></a>
+			</div>
+			<div class="weui-flex__item returnSpan">
+				<div class="placeholder" style="font-size: 18px;text-align: center;">{lang members_of_the_corpus_remove}</div>
+			</div>
+			<div class="weui-flex__item">
+				<div class="placeholder"></div>
+			</div>
+		</div>
+		<div class="weui-cells weui-cells_checkbox" style="margin-top: 0;">
+			<label class="weui-cell weui-check__label" for="x11" style="margin: 0;">
+                <div class="weui-cell__bd">
+                    <p>{lang no_remove}</p>
+                    <span class="choice_span">{lang the_corpus_administrator_is_not_allowed_to_remove_his_collected_corpus_from_the_group}</span>
+                </div>
+                <div class="weui-cell__ft" style="width: 40px;">
+                    <input type="radio" class="weui-check" name="user_book1" id="x11" value="0" checked="">
+                    <span class="weui-icon-checked"></span>
+                </div>
+            </label>
+			<label class="weui-cell weui-check__label" for="x12" style="margin: 0;">
+                <div class="weui-cell__bd">
+                    <p>{lang allow_to_remove}</p>
+                    <span class="choice_span">{lang the_corpus_administrator_is_allowed_to_remove_his_collected_corpus_from_the_group}</span>
+                </div>
+                <div class="weui-cell__ft" style="width: 40px;">
+                    <input type="radio" class="weui-check" name="user_book1" id="x12" value="1">
+                    <span class="weui-icon-checked"></span>
+                </div>
+            </label>
+		</div>
+		<div style="padding: 15px 10px;">
+			<div id="newcorpussubmit_btn" class="choose4 weui-btn weui-btn_primary">{lang submit}</div>
+		</div>
+	</div>
+</script>
+<script type="text/javascript" src="dzz/corpus/images/mobile/js/zepto.min.js?{VERHASH}"></script>
+<script type="text/javascript" src="dzz/corpus/images/mobile/js/example.js?{VERHASH}"></script>
+<script src="{MOD_PATH}/scripts/mobile_my.js?{VERHASH}" type="text/javascript" charset="utf-8"></script>
+</body>
+
+</html>

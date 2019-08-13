@@ -1,0 +1,131 @@
+<!--{template common/header_simple_start}-->
+<link href="static/css/common.css?{VERHASH}" rel="stylesheet" media="all">
+<link href="dzz/corpus/images/popbox.css?{VERHASH}" rel="stylesheet" media="all">
+<link href="dzz/corpus/images/corpus.css?{VERHASH}" rel="stylesheet" media="all">
+<script type="text/javascript" src="dzz/corpus/scripts/main.js?{VERHASH}"></script>
+<style>
+.window-module-archive .window-module-title{
+	margin-top:10px;
+	margin-bottom:10px;
+	margin-right:10px;
+
+}
+.window-module-archive h3{
+	height:30px;
+	line-height:30px;
+}
+.icon-lg{
+  line-height:30px;
+}
+
+</style>
+<!--{template common/header_simple_end}-->
+<nav class="navbar navbar-dzz bs-navbar-default" role="navigation" style="margin:0">
+      <!--{template common/top}--> 
+</nav>
+
+
+ <div class="main-content container clearfix">
+   	<div id="archive_container" class="archive-container" >
+    	 <div class="window-module window-module-archive">
+            <div class="window-module-title window-module-title-no-divider clearfix">
+            	<span class="icon-lg window-module-title-icon fa fa-bell-o"></span>
+            	<h3>{lang all_notice}</h3>
+            </div>
+          
+            <ul id="notification-list" class="notification-list list-unstyled u-gutter clearfix"> 
+             <!--{if $list}-->
+             <!--{loop $list $value}-->
+                <li class="notification-list-item clearfix">
+                <!--{if $value['avatarstatus']}-->
+                    <div class="member member-no-menu">
+                        <img class="member-avatar" src="avatar.php?uid=$value[authorid]&size=small" alt="$value[author]" title="$value[author]">
+                    </div>
+                    <!--{else}-->
+                    <div class="member member-no-menu">
+                        <span class="member-initials" title="$value[author]">$value[author]</span>
+                    </div>
+                    <!--{/if}-->
+                    <div class="details">
+                      <p class="note u-bottom" >$value[note]</p>
+                      <p class="dateline u-bottom">$value[dateline]</p>
+                    </div>
+                </li>
+                <!--{/loop}-->
+                <!--{if $next}-->
+                 <li style="line-height:35px;"><a class="js-loadmore"  data-href="$theurl&do=list&page={eval echo $page+1}" title="{lang load_more}" href="javascript:;">{lang load_more}</a></li>
+                <!--{/if}--> 
+             <!--{else}-->
+           		<p class="text-warning" style="line-height:35px;">{lang there_is_no_relevant_notice}</p>
+            <!--{/if}-->
+            </ul>
+           
+        </div>
+    </div>
+  
+ </div>
+
+<script type="text/javascript">
+
+jQuery(window).scroll(function(e) {
+	var clientHeight = document.documentElement.clientHeight;
+	var scrollHeight =document.documentElement.scrollHeight;
+    if(jQuery(window).scrollTop()+clientHeight>scrollHeight-20) jQuery('.js-loadmore').trigger('click');
+});
+jQuery(document).on('click','.js-loadmore',function(){
+		var el=jQuery(this);
+		jQuery.get(el.data('href'),function(html){
+			el.parent().replaceWith(html);
+		});
+		return false;
+});
+jQuery(document).ready(function(e) {
+    jQuery('.js-popbox').each(function(){
+		jQuery(this).popbox();
+	});
+	
+});
+var search_timer=null;
+jQuery('.js-search-input').on('keyup',function(e){
+	if(search_timer) window.clearTimeout(search_timer);
+	search_timer=window.setTimeout(function(){
+		document.getElementById('archive_search_form').onsubmit();
+	},1000);
+});
+jQuery('.js-search-addon').on('click',function(){
+	if(jQuery(this).find('i').hasClass('fa-remove')){
+		jQuery('#archive_search_form .js-search-input').val('');
+		document.getElementById('archive_search_form').onsubmit();
+	}else{
+		document.getElementById('archive_search_form').onsubmit();
+	}
+	return false;
+});
+function filter_by_orgid(orgid){
+	jQuery('#archive_search_orgid').val(orgid);
+	jQuery('#board_list_archive').load('{MOD_URL}&op=archive&do=list&orgid='+orgid);
+}
+function search_validate(form){
+	jQuery('#board_list_archive').load(form.action+'?'+jQuery(form).serialize(),function(){
+		if(jQuery('#archive_search_form .js-search-input').val()!=''){
+			jQuery('.js-search-addon i').addClass('fa-remove').removeClass('fa-serach');
+		}else{
+			jQuery('.js-search-addon i').addClass('fa-search').removeClass('fa-remove');
+		}
+	});
+	return false;
+}
+ 
+</script>
+
+<script  type="text/javascript" src="dzz/corpus/scripts/jquery.popbox.js?{VERHASH}"></script>
+<!-- The jQuery UI widget factory, can be omitted if jQuery UI is already included -->
+<script type="text/javascript" src="static/jquery_file_upload/jquery.ui.widget.js?{VERHASH}"></script>
+<script type="text/javascript" src="static/jquery_file_upload/jquery.iframe-transport.js?{VERHASH}"></script>
+<!-- The basic File Upload plugin -->
+<script type="text/javascript" src="static/jquery_file_upload/jquery.fileupload.js?{VERHASH}"></script>
+<script type="text/javascript" src="static/jquery_file_upload/jquery.fileupload-process.js?{VERHASH}"></script>
+<script type="text/javascript" src="static/jquery_file_upload/jquery.fileupload-validate.js?{VERHASH}"></script>
+<script src="static/bootstrap/js/bootstrap.min.js?{VERHASH}"></script>
+<!--codestrings-->
+<!--{template common/footer_simple}--> 

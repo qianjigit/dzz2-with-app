@@ -1,0 +1,24 @@
+  <!--{if $list}-->
+     <!--{loop $list $value}-->
+        <li class="notification-list-item clearfix">
+        <!--{if $value['avatarstatus']}-->
+            <div class="member member-no-menu">
+                <img class="member-avatar" src="avatar.php?uid=$value[authorid]&size=small" alt="$value[author]" title="$value[author]">
+            </div>
+            <!--{else}-->
+            <div class="member member-no-menu">
+                <span class="member-initials" title="$value[author]">$value[author]</span>
+            </div>
+            <!--{/if}-->
+            <div class="details">
+              <p class="note u-bottom" >$value[note]</p>
+              <p class="dateline u-bottom">$value[dateline]</p>
+            </div>
+        </li>
+        <!--{/loop}-->
+        <!--{if $next}-->
+         <li style="line-height:35px;"><a class="js-loadmore"  data-href="$theurl&do=list&page={eval echo $page+1}" title="{lang load_more}" href="javascript:;">{lang load_more}</a></li>
+        <!--{/if}--> 
+     <!--{else}-->
+        <p class="text-warning" style="line-height:35px;">{lang there_is_no_relevant_notice}</p>
+    <!--{/if}-->

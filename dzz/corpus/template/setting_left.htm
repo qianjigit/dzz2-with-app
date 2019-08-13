@@ -1,0 +1,28 @@
+<style type="text/css">
+.bs-left-container .nav-stacked>.active>a {
+	background: rgba(33,33,33,.05);
+	color: #424242;
+}
+.bs-left-container .nav-stacked>.active>.a_click2, .bs-left-container .nav-stacked>.active>a, .bs-left-container .nav-stacked>.active>a:hover{
+    color: #424242;
+    border: none;
+    background: rgba(33,33,33,.05);
+}
+.bs-left-container .nav-stacked>li>a:hover {
+    background: rgba(33,33,33,.05);
+    /*color: #f9a33c;*/
+    /*border: none;*/
+}
+.bs-left-container .nav-stacked>.active>a>span,
+.bs-left-container .nav-stacked>.active>a:hover>span{
+    color: #424242;
+}
+</style>
+<div class="leconMenu">
+	<ul class="nav-stacked">
+	    <li<!--{if $do=='basic'}--> class="active"<!--{/if}-->> <a href="{MOD_URL}&op=setting&do=basic"><span class="dzz dzz-settings"></span>{lang base_setting}</a></li>
+	    <li<!--{if $do=='manage'}--> class="active"<!--{/if}-->> <a href="{MOD_URL}&op=setting&do=manage"><span class="dzz dzz-book"></span>{lang the_corpus_management}</a></li>
+	    <!-- <li<!--{if $do=='report'}--> class="active"<!--{/if}-->> <a href="{MOD_URL}&op=setting&do=report"><span class="dzz dzz-verified"></span>{lang to_report_to_deal_with}</a></li> -->
+	    <!--<li<!--{if $do=='wxapp'}--> class="active"<!--{/if}-->> <a href="{MOD_URL}&op=setting&do=wxapp"><span class="dzz dzz-wechat"></span>{lang WeChat_set}</a></li>-->
+	</ul>
+</div>

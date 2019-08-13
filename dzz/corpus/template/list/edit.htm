@@ -1,0 +1,116 @@
+
+    <div class="main-content clearfix" style="padding:0;">
+    	<form id="corpusform" name="corpusform" class="form-horizontal-left form-horizontal" action="{BASESCRIPT}?mod=corpus&op=list&do=edit" method="post" onsubmit="return validate(this);" >
+            <input type="hidden" name="corpussubmit" value="true" />
+            <input type="hidden" name="cid" value="$cid" />
+            <input type="hidden" name="refer" value="$refer" />
+            <input type="hidden" name="formhash" value="{FORMHASH}" />
+              <div class="form-group">
+                <label class="control-label " for="name">{lang --title}：</label>
+                <input type="text" class="form-control" id="name"  name="name" autocomplete="off" value="$corpus[name]" onkeyup="jQuery('.corpus-item-title').html(this.value);" maxlength="80">
+              </div>
+              <div class="form-group">
+                <label class="control-label ">{lang select_cover}：</label>
+                <input type="hidden"  id="aid"  name="aid" autocomplete="off" value="$corpus[aid]">
+                <div class="controls cover-op" style="">
+                	<a class="cover-op-prev" href="javascript:;" onclick="moveCoverBack('prev')"></a>
+                    <a class="cover-op-next" href="javascript:;" onclick="moveCoverBack('next')"></a>
+                    <div class="corpus-item" style="margin:0;">
+                        <div class="corpus-item-back" style="overflow:hidden">
+                        	{eval $width=count($covers)*171;}
+                            <ul id="cover_ul" class="cover-ul list-unstyled clearfix" style="left:{$left}px;width:{$width}px;">
+                        		<!--{loop $covers $key $value}-->
+                                <li id="cover_ul_{$key}" class="pull-left cover-item"  data-aid="$value[aid]" > 
+                                    <img  src="$value[img]" >
+                                </li>
+                               <!--{/loop}-->
+                            </ul>
+                        </div>
+                        <div class="corpus-item-upper" >
+                            <div class="corpus-item-title" <!--{if $corpus[titlehide]}-->style="display:none"<!--{/if}-->>$corpus[name]</div>
+                        </div>
+                    </div>
+                   <div style="padding:10px;"><button class="btn btn-primary needindzz" onclick="uploadfrom_desktop();return false;">{lang select_images_from_the_desktop}</button></div>
+                </div>
+                
+              </div>
+              <div class="form-group">
+                <label class="control-label " for="name">{lang cover_title}：</label>
+                <div  class="controls ml20"> 
+                    <label class="radio radio-inline"><input type="radio" name="titlehide" value="0" <!--{if $corpus[titlehide]<1}-->checked<!--{/if}--> onclick="jQuery('.corpus-item-title').show();">{lang show} </label>
+                    <label class="radio radio-inline"><input type="radio" name="titlehide" value="1" <!--{if $corpus[titlehide]>0}-->checked<!--{/if}--> onclick="jQuery('.corpus-item-title').hide();">{lang hide}</label>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="control-label " for="name">{lang permission_setting}：</label>
+                <div  class="controls ml20"> 
+                    <label class="radio radio-inline"><input type="radio" name="perm" value="0" <!--{if $corpus[viewperm]<1}-->checked<!--{/if}-->>{lang open} </label>
+                    <label class="radio radio-inline"><input type="radio" name="perm" value="1" <!--{if $corpus[viewperm]>0}-->checked<!--{/if}-->>{lang privacy}</label>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="control-label " for="name">{lang comment_settings}：</label>
+                <div  class="controls ml20"> 
+                    <label class="radio radio-inline"><input type="radio" name="forbidcommit" value="0" <!--{if $corpus[forbidcommit]<1}-->checked<!--{/if}-->>{lang allow_comments} </label>
+                    <label class="radio radio-inline"><input type="radio" name="forbidcommit" value="1" <!--{if $corpus[forbidcommit]>0}-->checked<!--{/if}-->>{lang closing_comments}</label>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label class="control-label" ></label>
+                <button id="editbutton" class="button-link"  type="submit"><!--{if $cid}-->{lang save_settings}<!--{else}-->{lang create}<!--{/if}--></button>
+               
+              </div>
+             
+        </form>
+        <!--{if $corpus[archivetime]<1 && $corpus[deletetime]<1}-->
+        <div class="alert alert-warning" style="max-width:500px;">
+       		<p><a href="{BASESCRIPT}?mod=corpus&op=list&do=archive&cid=$cid"><button type="button" class="btn btn-sm btn-success"><b>{lang archive_this_corpus}</b></button></a></p> 			
+            <p class="text-danger">{lang unable_to_add_or_edit_the_contents_of_the_corpus}</p>
+       </div>
+        <!--{/if}-->
+        <!--{if $corpus[deletetime]<1  && $corpus[archivetime]<1}-->
+       <div class="alert alert-danger" style="max-width:500px;">
+       		<p><a class="btn btn-link" style="padding:2px 5px" href="{BASESCRIPT}?mod=corpus&op=list&do=delete&cid=$cid"><button type="button" class="btn btn-sm btn-danger"><b>{lang delete_this_corpus}</b></button></a></p>
+             <p class="text-danger">{lang everything_in_the_corpus_will_be_deleted}</p>
+       </div>
+        <!--{/if}-->
+        <!--{if $corpus[archivetime]>0 || $corpus[deletetime]>0}-->
+        <div class="alert alert-warning" style="max-width:330px;">
+       		<b><i class="glyphicon glyphicon-exclamation-sign"></i>&nbsp;{lang this_corpus} <!--{if $corpus['archivetime']>0}-->&nbsp;<em>“{lang archived}”</em>&nbsp;<!--{/if}--> <!--{if $corpus['deletetime']>0}-->&nbsp;<em>“{lang deleted}”</em>&nbsp;<!--{/if}--> {lang state}</b>&nbsp;&nbsp;
+            <a href="{BASESCRIPT}?mod=corpus&op=list&do=restore&cid=$cid"><button type="button" class="btn btn-sm btn-success"><b>{lang restore_the_corpus}</b></button></a> 			
+       </div>
+        <!--{/if}-->
+    </div>
+<script type="text/javascript">
+function validate(form){
+	if(form.name.value==''){
+		form.name.focus();
+		return false;
+	}
+	return true;
+}
+var movingTimer=false;
+function moveCoverBack(type){
+	if(movingTimer) jQuery('#cover_ul').stop(true,true);
+	movingTimer=true;
+	var width=jQuery('#cover_ul li').width();
+	var maxwidth=jQuery('#cover_ul').width();
+	var currentLeft=parseInt(jQuery('#cover_ul').css('left'));
+	switch(type){
+		case 'next':
+			var newleft=Math.abs(currentLeft-width)>=maxwidth?0:currentLeft-width;
+			break;
+		case 'prev':
+			var newleft=(currentLeft+width)<=0?(currentLeft+width):(-maxwidth+width);
+			break;
+	}
+	jQuery('#cover_ul').animate({'left':newleft},500,function(){movingTimer=false;});
+	var index=Math.abs(newleft/width);
+	jQuery('#aid').val(jQuery('#cover_ul_'+index).data('aid'));
+}
+
+jQuery(document).ready(function(e) {
+    if(!top._config) jQuery('.needindzz').hide();
+});
+</script>

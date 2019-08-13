@@ -1,0 +1,34 @@
+<!--{template common/header_simple_start_shou}-->
+<link href="static/css/common.css?{VERHASH}" rel="stylesheet" media="all">
+<link href="dzz/corpus/images/corpus.css?{VERHASH}" rel="stylesheet" media="all">
+<script type="text/javascript" src="static/js/imgReady.js?{VERHASH}"></script>
+<script type="text/javascript" src="dzz/corpus/scripts/main.js?{VERHASH}"></script>
+<!--{template common/header_simple_end}-->
+<link href="dzz/corpus/images/document.css?{VERHASH}" rel="stylesheet" media="all">
+    	
+ 
+     <div class="print-spacer print-hidden" style="height:30px;"></div>
+    <div class="document-container  clearfix" >
+        <div id="cover_body" class="cover-body background-cover <!--{if $corpus[aid]}-->cover<!--{/if}--> <!--{if $value[color]}-->color-white<!--{/if}--> "  style="background-color: $corpus[color]; ">
+            <h1 class="cover-subject">{lang cover}</h1>
+            <!--{if $corpus['aid']}--><img class="cover" src="{DZZSCRIPT}?mod=io&op=thumbnail&original=1&path={eval echo dzzencode('attach::'.$corpus['aid']);}" /><!--{/if}-->
+        </div>
+    </div>
+
+<script type="text/javascript">
+	jQuery(document).ready(function(e) {
+        jQuery('#cover_body').css('height',jQuery('#cover_body').width()*(4/3));
+		setImage(jQuery('#cover_body .cover').get(0),'100%','100%',1);
+    });
+	var timer=null;
+	jQuery(window).on('resize',function(){
+		if(timer) window.clearTimeout(timer);
+		timer=window.setTimeout(function(){
+				 jQuery('#cover_body').css('height',jQuery('#cover_body').width()*(4/3));
+				 setImage(jQuery('#cover_body .cover').get(0),'100%','100%',1);
+			 },50);
+	});
+</script>
+
+</body>
+</html>  
