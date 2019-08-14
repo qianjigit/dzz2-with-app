@@ -1,4 +1,7 @@
 ﻿# dzzoffice
+ 
+ 与官方的区别在于应用已经本地添加，但还是需要后台安装，预防官方应用无法下载
+ 
 
 ### 官方网站:http://dzzoffice.com
 ### 演示地址:http://demo.dzzoffice.com
